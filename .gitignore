@@ -27,3 +27,4 @@ database
 notes
 
 bun.lock
+.env
