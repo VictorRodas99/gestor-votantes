@@ -1,111 +1,62 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import 'tailwindcss';
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/*
+ * Theme token bridge: expose MUI's `--mui-*` CSS variables (emitted because
+ * the theme sets `cssVariables: true`) as Tailwind tokens. `inline` makes
+ * Tailwind emit `var(--mui-*)` directly in utilities, so classes like
+ * `bg-primary`, `text-secondary`, or `border-divider` follow the MUI theme.
+ */
+@theme inline {
+  /* Primary */
+  --color-primary: var(--mui-palette-primary-main);
+  --color-primary-light: var(--mui-palette-primary-light);
+  --color-primary-dark: var(--mui-palette-primary-dark);
+  --color-primary-contrast: var(--mui-palette-primary-contrastText);
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Secondary */
+  --color-secondary: var(--mui-palette-secondary-main);
+  --color-secondary-light: var(--mui-palette-secondary-light);
+  --color-secondary-dark: var(--mui-palette-secondary-dark);
+  --color-secondary-contrast: var(--mui-palette-secondary-contrastText);
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
+  /* Status */
+  --color-error: var(--mui-palette-error-main);
+  --color-error-light: var(--mui-palette-error-light);
+  --color-error-dark: var(--mui-palette-error-dark);
+  --color-warning: var(--mui-palette-warning-main);
+  --color-warning-light: var(--mui-palette-warning-light);
+  --color-warning-dark: var(--mui-palette-warning-dark);
+  --color-info: var(--mui-palette-info-main);
+  --color-info-light: var(--mui-palette-info-light);
+  --color-info-dark: var(--mui-palette-info-dark);
+  --color-success: var(--mui-palette-success-main);
+  --color-success-light: var(--mui-palette-success-light);
+  --color-success-dark: var(--mui-palette-success-dark);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+  /* Text */
+  --color-text-primary: var(--mui-palette-text-primary);
+  --color-text-secondary: var(--mui-palette-text-secondary);
+  --color-text-disabled: var(--mui-palette-text-disabled);
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
+  /* Surfaces */
+  --color-background-default: var(--mui-palette-background-default);
+  --color-background-paper: var(--mui-palette-background-paper);
+  --color-divider: var(--mui-palette-divider);
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
+  /* Common + greys */
+  --color-common-black: var(--mui-palette-common-black);
+  --color-common-white: var(--mui-palette-common-white);
+  --color-grey-50: var(--mui-palette-grey-50);
+  --color-grey-100: var(--mui-palette-grey-100);
+  --color-grey-200: var(--mui-palette-grey-200);
+  --color-grey-300: var(--mui-palette-grey-300);
+  --color-grey-400: var(--mui-palette-grey-400);
+  --color-grey-500: var(--mui-palette-grey-500);
+  --color-grey-600: var(--mui-palette-grey-600);
+  --color-grey-700: var(--mui-palette-grey-700);
+  --color-grey-800: var(--mui-palette-grey-800);
+  --color-grey-900: var(--mui-palette-grey-900);
 
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  /* Shape */
+  --radius-mui: var(--mui-shape-borderRadius);
 }
