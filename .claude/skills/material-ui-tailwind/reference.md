@@ -4,7 +4,7 @@
 
 ```css
 @layer theme, base, mui, components, utilities;
-@import "tailwindcss";
+@import 'tailwindcss';
 ```
 
 Pages Router + GlobalStyles (first child of `AppCacheProvider`):
@@ -30,11 +30,11 @@ From [Tailwind CSS v4 integration—Tailwind CSS IntelliSense for VS Code](ht
 ```js
 module.exports = {
   corePlugins: {
-    preflight: false,
+    preflight: false
   },
-  important: "#__next", // or '#root' for Vite
+  important: '#__next' // or '#root' for Vite
   // ...
-};
+}
 ```
 
 See [Interoperability—Tailwind CSS v3](https://mui.com/material-ui/integrations/interoperability.md#tailwind-css-v3).

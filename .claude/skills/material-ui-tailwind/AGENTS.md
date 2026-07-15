@@ -43,7 +43,7 @@ At the top of your global CSS (example from docs):
 
 ```css
 @layer theme, base, mui, components, utilities;
-@import "tailwindcss";
+@import 'tailwindcss';
 ```
 
 Adjust file paths to your app (`src/app/global.css`, `styles/global.css`, etc.).

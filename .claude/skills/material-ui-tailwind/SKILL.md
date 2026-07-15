@@ -4,7 +4,7 @@ description: Integrates Material UI with Tailwind CSS v4 using cascade layers 
 license: MIT
 metadata:
   author: mui
-  version: "1.0.0"
+  version: '1.0.0'
 ---
 
 # Material UI and Tailwind CSS

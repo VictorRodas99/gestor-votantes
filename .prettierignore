@@ -1,0 +1,7 @@
+dist
+node_modules
+bun.lock
+public/icons.svg
+.claude
+.agents
+skills-lock.json
