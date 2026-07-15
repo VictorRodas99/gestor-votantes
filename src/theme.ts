@@ -121,6 +121,31 @@ const theme = createTheme({
       letterSpacing: '0.01em',
       textTransform: 'none'
     }
+  },
+  // Defaults compartidos: evitan repetir sx/className en cada instancia.
+  components: {
+    // Tarjetas: sin sombra de MUI; usan borde 1px + sombra de tarjeta y radio 12px.
+    MuiCard: {
+      defaultProps: { elevation: 0 },
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          border: '1px solid var(--mui-palette-divider)',
+          boxShadow: 'var(--shadow-card)'
+        }
+      }
+    },
+    // Inputs de texto: fondo blanco (paper) y radio 8px, como el buscador del Inicio.
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 8,
+            backgroundColor: 'var(--mui-palette-background-paper)'
+          }
+        }
+      }
+    }
   }
 })
 

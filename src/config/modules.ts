@@ -4,6 +4,8 @@ import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded'
+import type { ComponentType, LazyExoticComponent } from 'react'
+import { lazy } from 'react'
 
 export type AppModule = {
   key: string
@@ -12,6 +14,8 @@ export type AppModule = {
   Icon: SvgIconComponent
   /** Si el módulo aparece como acceso directo en la navegación inferior. */
   inBottomNav: boolean
+  /** Página del módulo, cargada de forma diferida (code-splitting por ruta). */
+  Component: LazyExoticComponent<ComponentType>
 }
 
 export const modules: AppModule[] = [
@@ -20,28 +24,32 @@ export const modules: AppModule[] = [
     label: 'Votantes',
     path: '/votantes',
     Icon: GroupsRoundedIcon,
-    inBottomNav: true
+    inBottomNav: true,
+    Component: lazy(() => import('../pages/votantes'))
   },
   {
     key: 'asignacion',
     label: 'Asignación',
     path: '/asignacion',
     Icon: AssignmentRoundedIcon,
-    inBottomNav: true
+    inBottomNav: true,
+    Component: lazy(() => import('../pages/asignacion'))
   },
   {
     key: 'reportes',
     label: 'Reportes',
     path: '/reportes',
     Icon: InsertChartRoundedIcon,
-    inBottomNav: true
+    inBottomNav: true,
+    Component: lazy(() => import('../pages/reportes'))
   },
   {
     key: 'catalogos',
     label: 'Catálogos',
     path: '/catalogos',
     Icon: CategoryRoundedIcon,
-    inBottomNav: false
+    inBottomNav: false,
+    Component: lazy(() => import('../pages/catalogos'))
   }
 ]
 
@@ -50,7 +58,7 @@ export const homeNavItem = {
   label: 'Inicio',
   path: '/',
   Icon: HomeRoundedIcon
-} satisfies Omit<AppModule, 'inBottomNav'>
+} satisfies Pick<AppModule, 'key' | 'label' | 'path' | 'Icon'>
 
 export const bottomNavItems = [
   homeNavItem,

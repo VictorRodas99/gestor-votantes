@@ -96,6 +96,11 @@
   --spacing-stack-sm: 8px;
   --spacing-stack-md: 16px;
   --spacing-stack-lg: 24px;
+  /* Alto reservado bajo el contenido para la barra inferior fija (pb-bottom-nav). */
+  --spacing-bottom-nav: 6rem;
+
+  /* Elevación de tarjeta interactiva (index.md §Elevación). */
+  --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.05);
 
   --radius-sm: 0.25rem;
   --radius-md: 0.75rem;
