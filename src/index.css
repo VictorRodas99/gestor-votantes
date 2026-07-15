@@ -1,10 +1,7 @@
 @import 'tailwindcss';
 
 /*
- * Theme token bridge: expose MUI's `--mui-*` CSS variables (emitted because
- * the theme sets `cssVariables: true`) as Tailwind tokens. `inline` makes
- * Tailwind emit `var(--mui-*)` directly in utilities, so classes like
- * `bg-primary`, `text-secondary`, or `border-divider` follow the MUI theme.
+ * Theme token bridge: expose MUI's `--mui-*` CSS variables
  */
 @theme inline {
   /* Primary */
@@ -59,4 +56,69 @@
 
   /* Shape */
   --radius-mui: var(--mui-shape-borderRadius);
+}
+
+/*
+ * design tokens (notes/design/index.md) that have no MUI
+ * palette equivalent. Literal values, so a plain `@theme` block (not inline).
+ */
+@theme {
+  --font-sans:
+    'Inter Variable', 'Roboto Variable', 'Helvetica', 'Arial', sans-serif;
+
+  --color-surface: #f6f9ff;
+  --color-surface-dim: #d3dbe4;
+  --color-surface-bright: #f6f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #edf4fe;
+  --color-surface-container: #e7eff8;
+  --color-surface-container-high: #e1e9f2;
+  --color-surface-container-highest: #dbe3ed;
+  --color-on-surface: #151c23;
+  --color-on-surface-variant: #424751;
+  --color-outline: #727782;
+  --color-outline-variant: #c2c6d3;
+  --color-inverse-surface: #293138;
+  --color-inverse-on-surface: #eaf1fb;
+
+  /* Container roles for primary (Civic Blue) and secondary (Vibrant Gold). */
+  --color-primary-container: #1e5fa8;
+  --color-on-primary-container: #c5daff;
+  --color-secondary-container: #feb316;
+  --color-on-secondary-container: #6a4800;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --spacing-gutter: 16px;
+  --spacing-touch-target: 48px;
+  --spacing-margin-mobile: 20px;
+  --spacing-margin-desktop: 40px;
+  --spacing-stack-sm: 8px;
+  --spacing-stack-md: 16px;
+  --spacing-stack-lg: 24px;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --text-headline-lg: 30px;
+  --text-headline-lg--line-height: 38px;
+  --text-headline-lg--font-weight: 700;
+  --text-headline-lg--letter-spacing: -0.02em;
+  --text-headline-md: 20px;
+  --text-headline-md--line-height: 28px;
+  --text-headline-md--font-weight: 600;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 26px;
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  --text-label-md: 14px;
+  --text-label-md--line-height: 20px;
+  --text-label-md--font-weight: 600;
+  --text-label-md--letter-spacing: 0.01em;
+  --text-label-sm: 12px;
+  --text-label-sm--line-height: 16px;
+  --text-label-sm--font-weight: 500;
+  --text-label-sm--letter-spacing: 0.04em;
 }
