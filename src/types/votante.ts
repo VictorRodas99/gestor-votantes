@@ -1,0 +1,55 @@
+// Tipos del recurso Votante.
+//
+// Dos capas (notes/api/documentation.md §5.1):
+//   1. `VotanteRaw`   → cómo viene de la API: TODO string, `null` en algunos campos.
+//   2. `Votante`      → modelo de dominio ya casteado que consume la UI.
+
+/** Registro tal cual lo devuelve la API `/votantes` (todos los campos son string). */
+export type VotanteRaw = {
+  id: string
+  codigo: string
+  cedula: string
+  apellido: string
+  nombre: string
+  afiliacion: string
+  direccion: string
+  mapa: string
+  celular: string
+  familiar: string
+  observacion: string
+  fecha_nacimiento: string
+  edad: string
+  sexo: string
+  nacionalidad: string
+  local_votacion_id: string
+  boleta: string
+  talon: string
+  mesa: string
+  orden: string
+  hora_votacion: string
+  movil: string
+  voto_seguro: string
+  voto_concejal: string
+  voto_intendente: string
+  inc: string
+  valor_inc: string
+  encargado_visita: string | null
+  tipo_visita: string | null
+}
+
+/** Modelo de dominio: solo los campos que hoy usa el listado, ya casteados. */
+export type Votante = {
+  id: number
+  cedula: string
+  apellido: string
+  nombre: string
+  celular: string
+  /** Nombre completo "Nombre Apellido" para mostrar. */
+  nombreCompleto: string
+  /** Estado de compromiso (notes/conceptos.md "estado de compromiso"). */
+  afiliado: boolean
+  votoSeguro: boolean
+  /** `movil` = necesita transporte para ir a votar el Día D. */
+  requiereTransporte: boolean
+  localVotacionId: number
+}
