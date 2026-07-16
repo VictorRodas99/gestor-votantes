@@ -1,6 +1,9 @@
+import AddRoundedIcon from '@mui/icons-material/AddRounded'
+import Button from '@mui/material/Button'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useDebounce } from 'use-debounce'
 import SearchBar from '../components/search-bar'
@@ -51,11 +54,22 @@ function VotantesPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SearchBar
-        placeholder="Buscar votantes por apellido o CI…"
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-      />
+      <div className="flex gap-2">
+        <SearchBar
+          placeholder="Buscar votantes por apellido o CI…"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <Button
+          component={Link}
+          to="/votantes/nuevo"
+          variant="contained"
+          aria-label="Nuevo votante"
+          className="bg-primary-container text-white"
+        >
+          <AddRoundedIcon />
+        </Button>
+      </div>
 
       <VotantesFilterBar value={filters} onChange={setFilters} />
 
