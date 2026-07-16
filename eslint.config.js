@@ -23,6 +23,19 @@ export default defineConfig([
       '@typescript-eslint/consistent-type-imports': [
         'error',
         { prefer: 'type-imports', fixStyle: 'separate-type-imports' }
+      ],
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@mui/icons-material',
+              message:
+                'Importá cada ícono por subruta (ej. "@mui/icons-material/AddRounded"), no desde el barril: el barril prebundlea todos los íconos y ralentiza la carga.',
+              allowTypeImports: true
+            }
+          ]
+        }
       ]
     }
   },
