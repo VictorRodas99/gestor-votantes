@@ -1,9 +1,10 @@
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import AppBar from '@mui/material/AppBar'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { modules } from '../config/modules'
 import { APP_NAME } from '../constants/app'
 
@@ -12,11 +13,20 @@ import { APP_NAME } from '../constants/app'
  * en Inicio muestra el nombre de la app.
  */
 function TopBar() {
-  const { pathname } = useLocation()
+  const { pathname, key } = useLocation()
+  const navigate = useNavigate()
   const activeModule = modules.find((module) =>
     pathname.startsWith(module.path)
   )
   const title = activeModule?.label ?? APP_NAME
+  const isHome = pathname === '/'
+
+  const goBack = () => {
+    // `key === 'default'` = se entró directo a esta URL (sin historial propio):
+    // volvemos al inicio en vez de salir de la app.
+    if (key === 'default') navigate('/')
+    else navigate(-1)
+  }
 
   return (
     <AppBar
@@ -26,6 +36,16 @@ function TopBar() {
       className="border-b border-divider bg-background-default"
     >
       <Toolbar>
+        {isHome ? null : (
+          <IconButton
+            edge="start"
+            aria-label="Volver"
+            onClick={goBack}
+            className="text-primary"
+          >
+            <ArrowBackRoundedIcon className="size-7" />
+          </IconButton>
+        )}
         <Typography
           variant="h6"
           component="h1"
