@@ -10,8 +10,13 @@ import VotanteChips from './votante-chips'
 
 // Paleta determinista para el avatar: cada votante siempre cae en el mismo
 // color (por su cédula), dando variedad visual sin ser aleatorio entre renders.
-// Colores pensados para texto blanco encima (contraste AA).
-const AVATAR_COLORS = ['#004787', '#1e5fa8', '#146c2e', '#7f5700', '#5b3d8a']
+const AVATAR_COLORS = [
+  'var(--mui-palette-primary-main)',
+  'var(--mui-palette-primary-light)',
+  'var(--mui-palette-success-main)',
+  'var(--mui-palette-secondary-dark)',
+  '#5b3d8a'
+]
 
 function getAvatarColor(seed: string): string {
   let hash = 0

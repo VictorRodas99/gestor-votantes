@@ -73,7 +73,7 @@ function VotantesFilterBar({ value, onChange }: VotantesFilterBarProps) {
             ? truncate(selectedLocal.denominacion, MAX_LENGTH_LABEL)
             : undefined
         }
-        active={value.localVotacionId !== null}
+        active={value.localVotacionId != null}
       >
         {(close) => [
           <MenuItem
@@ -107,7 +107,7 @@ function VotantesFilterBar({ value, onChange }: VotantesFilterBarProps) {
             ? truncate(selectedEstado.label, MAX_LENGTH_LABEL)
             : undefined
         }
-        active={value.estado !== null}
+        active={value.estado != null}
       >
         {(close) => [
           <MenuItem

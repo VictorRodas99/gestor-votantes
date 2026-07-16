@@ -1,16 +1,15 @@
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useDebounce } from 'use-debounce'
-import EmptyState from '../components/empty-state'
-import ErrorState from '../components/error-state'
 import SearchBar from '../components/search-bar'
-import VotanteCard from '../components/votante-card'
-import VotanteCardSkeleton from '../components/votante-card-skeleton'
 import VotantesFilterBar, {
   type VotantesFilterValue
 } from '../components/votantes-filter-bar'
+import VotantesListDesktop from '../components/votantes-list-desktop'
+import VotantesListMobile from '../components/votantes-list-mobile'
 import { ESTADO_OPTIONS } from '../constants/votante'
-import { useVotantes } from '../hooks/services/votantes'
 import type { VotantesFilters } from '../services/votantes'
 import type { Votante } from '../types/votante'
 
@@ -27,6 +26,10 @@ function buildSearchFilters(search: string): Partial<VotantesFilters> {
 }
 
 function VotantesPage() {
+  const theme = useTheme()
+  // Escritorio → paginación por pasos; móvil/tablet → scroll infinito.
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
+
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebounce(search, 400)
   const [filters, setFilters] = useState<VotantesFilterValue>({})
@@ -41,14 +44,10 @@ function VotantesPage() {
     }
   }, [debouncedSearch, filters])
 
-  const { data, isLoading, isError, error, refetch } = useVotantes(queryFilters)
-
   const handleSelect = (votante: Votante) => {
     // TODO: navegar al detalle del votante cuando exista (hoy pendiente).
     toast(`Detalle de ${votante.nombreCompleto} — pendiente`)
   }
-
-  const votantes = data?.votantes ?? []
 
   return (
     <div className="flex flex-col gap-4">
@@ -60,33 +59,10 @@ function VotantesPage() {
 
       <VotantesFilterBar value={filters} onChange={setFilters} />
 
-      {isLoading ? (
-        <div className="flex flex-col gap-4">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <VotanteCardSkeleton key={index} />
-          ))}
-        </div>
-      ) : isError ? (
-        <ErrorState
-          title="No pudimos cargar los votantes"
-          description={error.message}
-          onRetry={() => refetch()}
-        />
-      ) : votantes.length === 0 ? (
-        <EmptyState
-          title="Sin resultados"
-          description="No encontramos votantes con esos criterios. Probá con otra búsqueda o filtro."
-        />
+      {isDesktop ? (
+        <VotantesListDesktop filters={queryFilters} onSelect={handleSelect} />
       ) : (
-        <div className="flex flex-col gap-4">
-          {votantes.map((votante) => (
-            <VotanteCard
-              key={votante.id}
-              votante={votante}
-              onSelect={handleSelect}
-            />
-          ))}
-        </div>
+        <VotantesListMobile filters={queryFilters} onSelect={handleSelect} />
       )}
     </div>
   )
