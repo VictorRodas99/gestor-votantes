@@ -33,6 +33,7 @@ export const useVotantesInfinite = (filters: VotantesFilters = {}) => {
       )
       return loaded < lastPage.total ? lastPage.page + 1 : undefined
     },
-    staleTime: VOTANTES_STALE_TIME
+    staleTime: VOTANTES_STALE_TIME,
+    refetchOnMount: false
   })
 }
