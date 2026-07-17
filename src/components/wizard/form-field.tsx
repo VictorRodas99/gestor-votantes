@@ -48,7 +48,7 @@ type FormFieldProps = {
   placeholder?: string
   type?: string
   disabled?: boolean
-  /** Render custom del control (date pickers, selects, etc.). */
+  numeric?: boolean
   render?: ControllerProps<WizardFormData>['render']
 }
 
@@ -62,6 +62,7 @@ export default function FormField({
   placeholder,
   type = 'text',
   disabled,
+  numeric,
   render
 }: FormFieldProps) {
   const { control } = useFormContext<WizardFormData>()
@@ -83,6 +84,19 @@ export default function FormField({
               disabled={disabled}
               error={Boolean(error)}
               fullWidth
+              onChange={
+                numeric
+                  ? (event) => {
+                      const digitos = event.target.value.replace(/\D/g, '')
+                      field.onChange(
+                        digitos === '' ? undefined : Number(digitos)
+                      )
+                    }
+                  : field.onChange
+              }
+              slotProps={
+                numeric ? { htmlInput: { inputMode: 'numeric' } } : undefined
+              }
             />
           </FieldShell>
         ))
