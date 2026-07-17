@@ -1,10 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMemo, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import StepDatosPersonales from '../components/wizard/step-datos-personales'
+import StepDatosVotacion from '../components/wizard/step-datos-votacion'
 import StepPlaceholder from '../components/wizard/step-placeholder'
 import WizardProgress from '../components/wizard/wizard-progress'
+import votanteWizardFormDefaults from '../forms/votante/default-values'
 import {
   wizardSchema,
   type WizardFormData
@@ -27,46 +29,19 @@ const STEP_TITLE: Record<FlowStep, string> = {
   [STEP.visita]: 'Visita'
 }
 
-const stepComponents: Record<FlowStep, (props: WizardStepProps) => ReactNode> =
-  {
-    [STEP.datos]: (props) => <StepDatosPersonales {...props} />,
-    [STEP.votacion]: (props) => (
-      <StepPlaceholder
-        title="Datos de Votación"
-        description="Local, boleta, talón, mesa y estado de compromiso."
-        {...props}
-      />
-    ),
-    [STEP.visita]: (props) => (
-      <StepPlaceholder
-        title="Visita"
-        description="Encargado, tipo de visita y observación."
-        {...props}
-      />
-    )
-  }
-
 function VotanteWizard() {
   const [step, setStep] = useState<{ previous: FlowStep; current: FlowStep }>({
     previous: STEP.datos,
     current: STEP.datos
   })
 
+  // Modo padrón/alta: dueño del orquestador para compartir el readonly del padrón
+  const [origen, setOrigen] = useState<'nuevo' | 'padron'>('nuevo')
+
   const form = useForm<WizardFormData>({
     resolver: zodResolver(wizardSchema),
     mode: 'onChange',
-    defaultValues: {
-      cedula: '',
-      apellido: '',
-      nombre: '',
-      fecha_nacimiento: '',
-      sexo: 'M',
-      celular: '',
-      direccion: { calle: '', lat: undefined, lng: undefined },
-      barrio_id: undefined,
-      referente_id: undefined,
-      nuevo_referente: undefined
-    }
+    defaultValues: votanteWizardFormDefaults
   })
 
   const handleNextStep = () => {
@@ -100,6 +75,17 @@ function VotanteWizard() {
       },
       barrio_id: data.barrio_id ?? 0,
       referente_id: data.referente_id ?? 0,
+      // Paso 2 · Datos de votación (numéricos; booleanos nativos, confirmado §0).
+      local_votacion_id: data.local_votacion_id,
+      boleta: data.boleta,
+      talon: data.talon,
+      mesa: data.mesa ?? null,
+      orden: data.orden ?? null,
+      afiliacion: data.afiliacion,
+      voto_seguro: data.voto_seguro,
+      voto_intendente: data.voto_intendente,
+      voto_concejal: data.voto_concejal,
+      movil: data.movil,
       nuevo_referente: data.nuevo_referente
         ? { ...data.nuevo_referente, barrio_id: data.barrio_id ?? 0 }
         : null
@@ -111,12 +97,38 @@ function VotanteWizard() {
   const isFirst = currentIndex === 0
   const isLast = currentIndex === STEP_ORDER.length - 1
 
-  const CurrentStep = useMemo(() => stepComponents[step.current], [step])
-
   const stepProps: WizardStepProps = {
     onNext: isLast ? undefined : handleNextStep,
     onPrevious: isFirst ? undefined : handlePrevStep,
     onSubmit: isLast ? handleSubmit : undefined
+  }
+
+  const renderStep = (): ReactNode => {
+    switch (step.current) {
+      case STEP.datos:
+        return (
+          <StepDatosPersonales
+            {...stepProps}
+            origen={origen}
+            onOrigenChange={setOrigen}
+          />
+        )
+      case STEP.votacion:
+        return (
+          <StepDatosVotacion
+            {...stepProps}
+            readOnlyPadron={origen === 'padron'}
+          />
+        )
+      case STEP.visita:
+        return (
+          <StepPlaceholder
+            title="Visita"
+            description="Encargado, tipo de visita y observación."
+            {...stepProps}
+          />
+        )
+    }
   }
 
   return (
@@ -127,7 +139,7 @@ function VotanteWizard() {
           total={STEP_ORDER.length}
           title={STEP_TITLE[step.current]}
         />
-        {CurrentStep(stepProps)}
+        {renderStep()}
       </div>
     </FormProvider>
   )
