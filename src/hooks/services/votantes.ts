@@ -8,6 +8,22 @@ import { getVotantes, type VotantesFilters } from '../../services/votantes'
 export const BASE_VOTANTE_QUERY = 'votantes'
 const VOTANTES_STALE_TIME = 1000 * 30 // 30 secs
 
+/** Cédula válida para disparar la búsqueda de prefill (5–8 dígitos). */
+const CEDULA_BUSCABLE = /^\d{5,8}$/
+
+/**
+ * Busca un votante existente por cédula (match exacto server-side) para el
+ * prefill del wizard. Solo consulta con una cédula de 5–8 dígitos.
+ */
+export const useVotantePorCedula = (cedula: string) => {
+  return useQuery({
+    queryKey: [BASE_VOTANTE_QUERY, 'por-cedula', cedula],
+    queryFn: () => getVotantes({ cedula }),
+    enabled: CEDULA_BUSCABLE.test(cedula),
+    staleTime: VOTANTES_STALE_TIME
+  })
+}
+
 export const useVotantesPaged = (
   filters: VotantesFilters = {},
   page: number
@@ -20,7 +36,6 @@ export const useVotantesPaged = (
   })
 }
 
-// para scroll infinito
 export const useVotantesInfinite = (filters: VotantesFilters = {}) => {
   return useInfiniteQuery({
     queryKey: [BASE_VOTANTE_QUERY, 'infinite', filters],
