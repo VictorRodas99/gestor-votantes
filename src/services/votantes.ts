@@ -26,7 +26,10 @@ function mapVotante(raw: VotanteRaw): Votante {
     afiliado: toBoolean(raw.afiliacion),
     votoSeguro: toBoolean(raw.voto_seguro),
     requiereTransporte: toBoolean(raw.movil),
-    localVotacionId: Number(raw.local_votacion_id)
+    localVotacionId: Number(raw.local_votacion_id),
+    fechaNacimiento: raw.fecha_nacimiento,
+    sexo: raw.sexo,
+    nacionalidad: raw.nacionalidad
   }
 }
 
