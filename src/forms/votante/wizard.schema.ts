@@ -1,8 +1,10 @@
 import type { z } from 'zod'
+import { pasoDosSchema } from './paso-dos.schema'
 import { pasoUnoSchema } from './paso-uno.schema'
 import { referenteSchema } from './referente.schema'
 
 export const wizardSchema = pasoUnoSchema
+  .extend(pasoDosSchema.shape)
   .extend({
     nuevo_referente: referenteSchema.optional()
   })
