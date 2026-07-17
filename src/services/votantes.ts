@@ -27,6 +27,8 @@ function mapVotante(raw: VotanteRaw): Votante {
     votoSeguro: toBoolean(raw.voto_seguro),
     requiereTransporte: toBoolean(raw.movil),
     localVotacionId: Number(raw.local_votacion_id),
+    boleta: Number(raw.boleta),
+    talon: Number(raw.talon),
     fechaNacimiento: raw.fecha_nacimiento,
     sexo: raw.sexo,
     nacionalidad: raw.nacionalidad
