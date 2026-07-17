@@ -25,3 +25,31 @@ export const getLocalesVotacion = async (): Promise<CatalogoItem[]> => {
     throw new Error('No pudimos cargar los locales de votación.')
   }
 }
+
+export const getBarrios = async (): Promise<CatalogoItem[]> => {
+  try {
+    const response = await api
+      .get(CATALOGO_ROUTES.barrios, {
+        searchParams: { per_page: CATALOGO_PER_PAGE }
+      })
+      .json<PaginatedResponse<CatalogoRaw>>()
+
+    return response.data.map(mapCatalogo)
+  } catch {
+    return []
+  }
+}
+
+export const getSectores = async (): Promise<CatalogoItem[]> => {
+  try {
+    const response = await api
+      .get(CATALOGO_ROUTES.sectores, {
+        searchParams: { per_page: CATALOGO_PER_PAGE }
+      })
+      .json<PaginatedResponse<CatalogoRaw>>()
+
+    return response.data.map(mapCatalogo)
+  } catch {
+    return []
+  }
+}
