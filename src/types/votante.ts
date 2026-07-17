@@ -35,6 +35,8 @@ export type VotanteRaw = {
   valor_inc: string
   encargado_visita: string | null
   tipo_visita: string | null
+  /** Vínculo votante↔referente (FK 1:N). `"0"` = sin asignar. */
+  referente_id: string
 }
 
 /** Modelo de dominio: solo los campos que hoy usa el listado, ya casteados. */
