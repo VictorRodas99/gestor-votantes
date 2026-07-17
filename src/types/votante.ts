@@ -52,6 +52,8 @@ export type Votante = {
   /** `movil` = necesita transporte para ir a votar el Día D. */
   requiereTransporte: boolean
   localVotacionId: number
+  boleta: number
+  talon: number
   // Identidad para el prefill del wizard (enriquecimiento por cédula).
   /** `YYYY-MM-DD` del padrón. */
   fechaNacimiento: string
