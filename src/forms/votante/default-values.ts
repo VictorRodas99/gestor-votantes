@@ -24,7 +24,17 @@ const pasoDosDefaults = {
   movil: false
 } as const
 
+const pasoTresDefaults = {
+  encargado_visita: '',
+  tipo_visita: '',
+  observacion: '',
+  familiar: false,
+  inc: false,
+  valor_inc: undefined
+} as const
+
 export default {
   ...pasoUnoDefaults,
-  ...pasoDosDefaults
+  ...pasoDosDefaults,
+  ...pasoTresDefaults
 }
