@@ -1,6 +1,5 @@
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 import Button from '@mui/material/Button'
-import { useState } from 'react'
 import { useFormContext, useWatch, type Path } from 'react-hook-form'
 import type { WizardFormData } from '../../forms/votante/wizard.schema'
 import type { Votante } from '../../types/votante'
@@ -28,10 +27,20 @@ const PASO_UNO_FIELDS: Path<WizardFormData>[] = [
   'nuevo_referente'
 ]
 
+type StepDatosPersonalesProps = WizardStepProps & {
+  origen: 'nuevo' | 'padron'
+  onOrigenChange: (origen: 'nuevo' | 'padron') => void
+}
+
 /** Paso 1 · Datos Personales (identidad + campaña + referente). */
-export default function StepDatosPersonales({ onNext }: WizardStepProps) {
+export default function StepDatosPersonales({
+  onNext,
+  origen,
+  onOrigenChange
+}: StepDatosPersonalesProps) {
   const form = useFormContext<WizardFormData>()
-  const [origen, setOrigen] = useState<'nuevo' | 'padron'>('nuevo')
+
+  // orquestador para que el readonly del padrón lo compartan Paso 1 y Paso 2.
   const referenteId = useWatch({ control: form.control, name: 'referente_id' })
 
   const readOnlyIdentidad = origen === 'padron'
@@ -45,7 +54,13 @@ export default function StepDatosPersonales({ onNext }: WizardStepProps) {
       form.setValue('sexo', votante.sexo)
     }
     if (votante.celular) form.setValue('celular', votante.celular)
-    setOrigen('padron')
+
+    if (votante.localVotacionId) {
+      form.setValue('local_votacion_id', votante.localVotacionId)
+    }
+    if (votante.boleta) form.setValue('boleta', votante.boleta)
+    if (votante.talon) form.setValue('talon', votante.talon)
+    onOrigenChange('padron')
   }
 
   const handleNext = async () => {
@@ -58,7 +73,7 @@ export default function StepDatosPersonales({ onNext }: WizardStepProps) {
       <CedulaSearch
         origen={origen}
         onPrefill={prefillDesdePadron}
-        onReset={() => setOrigen('nuevo')}
+        onReset={() => onOrigenChange('nuevo')}
       />
 
       <div className="grid grid-cols-2 gap-3">
@@ -88,7 +103,8 @@ export default function StepDatosPersonales({ onNext }: WizardStepProps) {
       <FormField
         name="celular"
         label="Celular"
-        placeholder="Ej: 0991 123 456"
+        placeholder="Ej: 0991123456"
+        type="tel"
       />
 
       <UbicacionField />
