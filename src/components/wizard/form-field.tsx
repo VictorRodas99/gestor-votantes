@@ -49,6 +49,8 @@ type FormFieldProps = {
   type?: string
   disabled?: boolean
   numeric?: boolean
+  multiline?: boolean
+  minRows?: number
   render?: ControllerProps<WizardFormData>['render']
 }
 
@@ -63,6 +65,8 @@ export default function FormField({
   type = 'text',
   disabled,
   numeric,
+  multiline,
+  minRows = 4,
   render
 }: FormFieldProps) {
   const { control } = useFormContext<WizardFormData>()
@@ -82,6 +86,8 @@ export default function FormField({
               type={type}
               placeholder={placeholder}
               disabled={disabled}
+              multiline={multiline}
+              minRows={multiline ? minRows : undefined}
               error={Boolean(error)}
               fullWidth
               onChange={
