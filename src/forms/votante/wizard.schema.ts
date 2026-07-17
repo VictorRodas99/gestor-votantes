@@ -1,10 +1,12 @@
 import type { z } from 'zod'
 import { pasoDosSchema } from './paso-dos.schema'
+import { pasoTresSchema } from './paso-tres.schema'
 import { pasoUnoSchema } from './paso-uno.schema'
 import { referenteSchema } from './referente.schema'
 
 export const wizardSchema = pasoUnoSchema
   .extend(pasoDosSchema.shape)
+  .extend(pasoTresSchema.shape)
   .extend({
     nuevo_referente: referenteSchema.optional()
   })
@@ -24,6 +26,15 @@ export const wizardSchema = pasoUnoSchema
         message:
           'Debe asignar un referente: elija uno existente o cree uno nuevo',
         path: ['referente_id']
+      })
+    }
+
+    // si inc es false desactivar input inc
+    if (data.inc && !data.valor_inc) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Ingrese el monto',
+        path: ['valor_inc']
       })
     }
   })
