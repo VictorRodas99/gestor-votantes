@@ -7,8 +7,7 @@ import HomePage from './pages/home'
 import NotFound from './pages/not-found'
 
 const lazyPages = {
-  votanteWizard: lazy(() => import('./pages/votante-wizard')),
-  votanteDetalle: lazy(() => import('./pages/votante-detalle'))
+  votanteWizard: lazy(() => import('./pages/votante-wizard'))
 }
 
 export const router = createBrowserRouter([
@@ -22,7 +21,6 @@ export const router = createBrowserRouter([
         element: <module.Component />
       })),
       { path: 'votantes/nuevo', element: <lazyPages.votanteWizard /> },
-      { path: 'votantes/:cedula', element: <lazyPages.votanteDetalle /> },
       { path: '*', element: <NotFound /> }
     ]
   }
