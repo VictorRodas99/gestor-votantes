@@ -1,4 +1,4 @@
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
+// import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import AppBar from '@mui/material/AppBar'
 import IconButton from '@mui/material/IconButton'
@@ -41,7 +41,7 @@ function TopBar() {
             edge="start"
             aria-label="Volver"
             onClick={goBack}
-            className="text-primary"
+            className="text-primary lg:hidden"
           >
             <ArrowBackRoundedIcon className="size-7" />
           </IconButton>
@@ -49,13 +49,13 @@ function TopBar() {
         <Typography
           variant="h6"
           component="h1"
-          className="flex-1 text-center text-2xl font-semibold tracking-wide text-primary"
+          className="flex-1 text-center text-2xl font-semibold tracking-wide text-primary lg:text-left"
         >
           {title}
         </Typography>
-        <IconButton edge="end" aria-label="Cuenta" className="text-primary">
+        {/* <IconButton edge="end" aria-label="Cuenta" className="text-primary">
           <AccountCircleOutlinedIcon className="size-8" />
-        </IconButton>
+        </IconButton> */}
       </Toolbar>
     </AppBar>
   )
