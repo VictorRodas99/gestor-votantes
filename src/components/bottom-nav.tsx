@@ -1,19 +1,16 @@
 import BottomNavigation from '@mui/material/BottomNavigation'
 import BottomNavigationAction from '@mui/material/BottomNavigationAction'
 import { Link, useLocation } from 'react-router-dom'
-import { bottomNavItems } from '../config/modules'
+import { bottomNavItems, resolveActiveKey } from '../config/modules'
 
 /**
- * Navegación inferior fija. Deriva de `bottomNavItems` (Inicio + módulos con
- * `inBottomNav`). El ítem activo se resuelve por la URL: Inicio solo en la raíz
- * exacta; el resto por prefijo, así `/votantes/nuevo` mantiene "Votantes" activo.
+ * Navegación inferior fija (mobile/tablet). Deriva de `bottomNavItems` (Inicio +
+ * módulos con `inBottomNav`). El ítem activo se resuelve por la URL. En desktop
+ * (`lg`) se oculta: la navegación pasa al `Sidebar`.
  */
 function BottomNav() {
   const { pathname } = useLocation()
-  const activeKey =
-    bottomNavItems.find((item) =>
-      item.path === '/' ? pathname === '/' : pathname.startsWith(item.path)
-    )?.key ?? false
+  const activeKey = resolveActiveKey(pathname, bottomNavItems)
 
   return (
     <BottomNavigation
@@ -21,7 +18,7 @@ function BottomNav() {
       aria-label="Navegación principal"
       showLabels
       value={activeKey}
-      className="fixed inset-x-0 bottom-0 z-10 h-auto border-t border-divider bg-background-default py-4"
+      className="fixed inset-x-0 bottom-0 z-10 h-auto border-t border-divider bg-background-default py-4 lg:hidden"
     >
       {bottomNavItems.map((item) => (
         <BottomNavigationAction
