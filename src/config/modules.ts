@@ -64,3 +64,21 @@ export const bottomNavItems = [
   homeNavItem,
   ...modules.filter((module) => module.inBottomNav)
 ]
+
+/** Navegación del sidebar (desktop): Inicio + todos los módulos, incluido Catálogos. */
+export const sidebarNavItems = [homeNavItem, ...modules]
+
+type NavItem = Pick<AppModule, 'key' | 'path'>
+
+/**
+ * Resuelve qué ítem de navegación está activo según la URL. Inicio (`/`) solo
+ * matchea de forma exacta; el resto por prefijo, así `/votantes/nuevo` mantiene
+ * "Votantes" activo. Compartido por `BottomNav` y `Sidebar` para no divergir.
+ */
+export function resolveActiveKey(pathname: string, items: NavItem[]) {
+  return (
+    items.find((item) =>
+      item.path === '/' ? pathname === '/' : pathname.startsWith(item.path)
+    )?.key ?? false
+  )
+}
