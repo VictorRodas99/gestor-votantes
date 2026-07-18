@@ -2,62 +2,45 @@ import type { Votante } from '../types/votante'
 
 // Chips del "estado de compromiso" del votante.
 
-type Chip = {
-  key: string
-  label: string
-  className: string
+function Pill({ label, className }: { label: string; className: string }) {
+  return (
+    <span
+      className={`inline-block rounded-full px-3 py-1 text-label-md font-medium ${className}`}
+    >
+      {label}
+    </span>
+  )
 }
 
 /**
- * Estado de voto: mutuamente excluyente, siempre hay uno.
+ * Estado de voto (mutuamente excluyente, siempre hay uno):
  * `votoSeguro` → verde "Voto seguro"; si no → ámbar "Indeciso".
- * Más los chips independientes: "Afiliado" (azul) y "Requiere transporte" (gris).
+ * Se usa suelto en la tabla del listado y dentro de `VotanteChips`.
  */
-function getChips(votante: Votante): Chip[] {
-  const chips: Chip[] = [
-    votante.votoSeguro
-      ? {
-          key: 'voto',
-          label: 'Voto seguro',
-          className: 'bg-success/10 text-success-dark'
-        }
-      : {
-          key: 'voto',
-          label: 'Indeciso',
-          className: 'bg-warning/15 text-warning-dark'
-        }
-  ]
-
-  if (votante.afiliado) {
-    chips.push({
-      key: 'afiliado',
-      label: 'Afiliado',
-      className: 'bg-primary/10 text-primary'
-    })
-  }
-
-  if (votante.requiereTransporte) {
-    chips.push({
-      key: 'transporte',
-      label: 'Requiere transporte',
-      className: 'bg-surface-container-high text-text-secondary'
-    })
-  }
-
-  return chips
+export function VotoEstadoChip({ votante }: { votante: Votante }) {
+  return votante.votoSeguro ? (
+    <Pill label="Voto seguro" className="bg-success/10 text-success-dark" />
+  ) : (
+    <Pill label="Indeciso" className="bg-warning/15 text-warning-dark" />
+  )
 }
 
+/** Todos los chips de compromiso: voto + afiliado + transporte. */
 function VotanteChips({ votante }: { votante: Votante }) {
   return (
     <div className="mt-1.5 flex flex-wrap gap-2">
-      {getChips(votante).map((chip) => (
-        <span
-          key={chip.key}
-          className={`rounded-full px-3 py-1 text-label-md font-medium ${chip.className}`}
-        >
-          {chip.label}
-        </span>
-      ))}
+      <VotoEstadoChip votante={votante} />
+
+      {votante.afiliado && (
+        <Pill label="Afiliado" className="bg-primary/10 text-primary" />
+      )}
+
+      {votante.requiereTransporte && (
+        <Pill
+          label="Requiere transporte"
+          className="bg-surface-container-high text-text-secondary"
+        />
+      )}
     </div>
   )
 }
