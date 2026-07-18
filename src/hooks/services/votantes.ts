@@ -3,7 +3,11 @@ import {
   useInfiniteQuery,
   useQuery
 } from '@tanstack/react-query'
-import { getVotantes, type VotantesFilters } from '../../services/votantes'
+import {
+  getVotanteByCedula,
+  getVotantes,
+  type VotantesFilters
+} from '../../services/votantes'
 
 export const BASE_VOTANTE_QUERY = 'votantes'
 const VOTANTES_STALE_TIME = 1000 * 30 // 30 secs
@@ -20,6 +24,19 @@ export const useVotantePorCedula = (cedula: string) => {
     queryKey: [BASE_VOTANTE_QUERY, 'por-cedula', cedula],
     queryFn: () => getVotantes({ cedula }),
     enabled: CEDULA_BUSCABLE.test(cedula),
+    staleTime: VOTANTES_STALE_TIME
+  })
+}
+
+/**
+ * Detalle de un votante por cédula (panel / modal de detalle). Solo consulta
+ * cuando hay una cédula seleccionada.
+ */
+export const useVotante = (cedula: string | null) => {
+  return useQuery({
+    queryKey: [BASE_VOTANTE_QUERY, 'detalle', cedula],
+    queryFn: () => getVotanteByCedula(cedula as string),
+    enabled: Boolean(cedula),
     staleTime: VOTANTES_STALE_TIME
   })
 }

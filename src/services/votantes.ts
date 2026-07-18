@@ -29,9 +29,15 @@ function mapVotante(raw: VotanteRaw): Votante {
     localVotacionId: Number(raw.local_votacion_id),
     boleta: Number(raw.boleta),
     talon: Number(raw.talon),
+    mesa: Number(raw.mesa),
+    orden: Number(raw.orden),
     fechaNacimiento: raw.fecha_nacimiento,
     sexo: raw.sexo,
-    nacionalidad: raw.nacionalidad
+    nacionalidad: raw.nacionalidad,
+    direccion: raw.direccion.trim(),
+    encargadoVisita: raw.encargado_visita,
+    tipoVisita: raw.tipo_visita,
+    observacion: raw.observacion.trim()
   }
 }
 
@@ -113,4 +119,15 @@ export const getVotantes = async (
       cause: reason
     })
   }
+}
+
+/**
+ * Trae un votante puntual por cédula.
+ * Devuelve `null` si no existe.
+ */
+export const getVotanteByCedula = async (
+  cedula: string
+): Promise<Votante | null> => {
+  const { votantes } = await getVotantes({ cedula, perPage: 1 })
+  return votantes[0] ?? null
 }
