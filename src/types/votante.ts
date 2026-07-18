@@ -56,10 +56,17 @@ export type Votante = {
   localVotacionId: number
   boleta: number
   talon: number
+  mesa: number
+  orden: number
   // Identidad para el prefill del wizard (enriquecimiento por cédula).
   /** `YYYY-MM-DD` del padrón. */
   fechaNacimiento: string
   /** `'M'` / `'F'` del padrón. */
   sexo: string
   nacionalidad: string
+  // Campos que hoy solo consume el detalle (no el listado).
+  direccion: string
+  encargadoVisita: string | null
+  tipoVisita: string | null
+  observacion: string
 }
