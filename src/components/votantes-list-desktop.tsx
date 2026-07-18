@@ -1,21 +1,33 @@
 import Pagination from '@mui/material/Pagination'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 import { useState } from 'react'
 import { VOTANTES_PER_PAGE } from '../constants/config'
 import { useVotantesPaged } from '../hooks/services/votantes'
+import { formatCedula } from '../lib/format'
 import type { VotantesFilters } from '../services/votantes'
 import type { Votante } from '../types/votante'
 import EmptyState from './empty-state'
 import ErrorState from './error-state'
-import VotanteCard from './votante-card'
+import { VotoEstadoChip } from './votante-chips'
 import VotantesLoading from './votantes-loading'
 
 type VotantesListDesktopProps = {
   filters: VotantesFilters
+  /** Cédula del votante abierto en el panel/modal (fila resaltada). */
+  selectedCedula: string | null
   onSelect: (votante: Votante) => void
 }
 
-// por el momento se usan las mismas cards pero la versión final tiene que ser una tabla
-function VotantesListDesktop({ filters, onSelect }: VotantesListDesktopProps) {
+function VotantesListDesktop({
+  filters,
+  selectedCedula,
+  onSelect
+}: VotantesListDesktopProps) {
   const [page, setPage] = useState(1)
   const [appliedFilters, setAppliedFilters] = useState(filters)
 
@@ -56,17 +68,48 @@ function VotantesListDesktop({ filters, onSelect }: VotantesListDesktopProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className={isPlaceholderData ? 'opacity-60 transition-opacity' : ''}>
-        <div className="flex flex-col gap-4">
-          {votantes.map((votante) => (
-            <VotanteCard
-              key={votante.id}
-              votante={votante}
-              onSelect={onSelect}
-            />
-          ))}
-        </div>
-      </div>
+      <TableContainer className="rounded-xl border border-divider">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell className="text-label-md font-semibold text-text-secondary uppercase">
+                Apellido, Nombre
+              </TableCell>
+              <TableCell className="text-label-md font-semibold text-text-secondary uppercase">
+                CI
+              </TableCell>
+              <TableCell className="text-label-md font-semibold text-text-secondary uppercase">
+                Estado
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody
+            className={
+              isPlaceholderData ? 'opacity-60 transition-opacity' : undefined
+            }
+          >
+            {votantes.map((votante) => (
+              <TableRow
+                key={votante.id}
+                hover
+                selected={votante.cedula === selectedCedula}
+                onClick={() => onSelect(votante)}
+                className="cursor-pointer"
+              >
+                <TableCell className="font-medium text-text-primary">
+                  {votante.apellido}, {votante.nombre}
+                </TableCell>
+                <TableCell className="text-text-secondary">
+                  {formatCedula(votante.cedula)}
+                </TableCell>
+                <TableCell>
+                  <VotoEstadoChip votante={votante} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       {pageCount > 1 ? (
         <Pagination
