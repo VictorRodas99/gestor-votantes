@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, type ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import StepDatosPersonales from '../components/wizard/step-datos-personales'
 import StepDatosVisita from '../components/wizard/step-datos-visita'
@@ -29,7 +30,15 @@ const STEP_TITLE: Record<FlowStep, string> = {
   [STEP.visita]: 'Visita'
 }
 
+// Labels cortos para el stepper horizontal de desktop.
+const STEP_SHORT_LABEL: Record<FlowStep, string> = {
+  [STEP.datos]: 'Personales',
+  [STEP.votacion]: 'Votación',
+  [STEP.visita]: 'Visita'
+}
+
 function VotanteWizard() {
+  const navigate = useNavigate()
   const [step, setStep] = useState<{ previous: FlowStep; current: FlowStep }>({
     previous: STEP.datos,
     current: STEP.datos
@@ -119,6 +128,7 @@ function VotanteWizard() {
             {...stepProps}
             origen={origen}
             onOrigenChange={setOrigen}
+            onCancel={() => navigate('/votantes')}
           />
         )
       case STEP.votacion:
@@ -135,11 +145,13 @@ function VotanteWizard() {
 
   return (
     <FormProvider {...form}>
-      <div className="flex flex-col gap-6">
+      {/* Tablet: columna acotada y centrada; desktop: ancho completo (2 columnas). */}
+      <div className="flex flex-col gap-6 md:mx-auto md:max-w-2xl lg:max-w-none">
         <WizardProgress
           current={currentIndex}
           total={STEP_ORDER.length}
           title={STEP_TITLE[step.current]}
+          steps={STEP_ORDER.map((s) => STEP_SHORT_LABEL[s])}
         />
         {renderStep()}
       </div>
