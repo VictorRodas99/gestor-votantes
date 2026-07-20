@@ -3,7 +3,7 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import Button from '@mui/material/Button'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useDebounce } from 'use-debounce'
@@ -32,6 +32,9 @@ function buildSearchFilters(search: string): Partial<VotantesFilters> {
   return isCedula ? { cedula: digits } : { apellido: trimmed }
 }
 
+const handleExport = () =>
+  toast('La exportación de votantes está en construcción.')
+
 function VotantesPage() {
   const theme = useTheme()
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
@@ -44,15 +47,13 @@ function VotantesPage() {
 
   const selectedCedula = searchParams.get('ci')
 
-  const queryFilters = useMemo<VotantesFilters>(() => {
-    const estado = ESTADO_OPTIONS.find((o) => o.value === filters.estado)
+  const estado = ESTADO_OPTIONS.find((o) => o.value === filters.estado)
 
-    return {
-      ...buildSearchFilters(debouncedSearch),
-      localVotacionId: filters.localVotacionId,
-      ...estado?.filters
-    }
-  }, [debouncedSearch, filters])
+  const queryFilters: VotantesFilters = {
+    ...buildSearchFilters(debouncedSearch),
+    localVotacionId: filters.localVotacionId,
+    ...estado?.filters
+  }
 
   // Abrir empuja una entrada al historial → el botón "atrás" cierra el modal.
   const openDetalle = (votante: Votante) =>
@@ -69,9 +70,6 @@ function VotantesPage() {
       },
       { replace: true }
     )
-
-  const handleExport = () =>
-    toast('La exportación de votantes está en construcción.')
 
   return (
     <>
