@@ -6,58 +6,12 @@ import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import L from 'leaflet'
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import type L from 'leaflet'
 import { useEffect, useState } from 'react'
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer } from 'react-leaflet'
 import { toast } from 'sonner'
 import { CIUDAD_COORDS_CENTER, MAP_DEFAULT_ZOOM } from '../../constants/map'
-
-// Fix del ícono por defecto de Leaflet con bundlers (las URLs relativas se rompen).
-const markerDefaultIcon = L.icon({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-})
-
-type LatLng = [number, number]
-
-/** Marcador que se coloca al tocar el mapa y se puede arrastrar. */
-function ClickMarker({
-  position,
-  onChange
-}: {
-  position: LatLng | null
-  onChange: (position: LatLng) => void
-}) {
-  useMapEvents({
-    click(event) {
-      onChange([event.latlng.lat, event.latlng.lng])
-    }
-  })
-
-  if (!position) return null
-
-  return (
-    <Marker
-      position={position}
-      icon={markerDefaultIcon}
-      draggable
-      eventHandlers={{
-        dragend(event) {
-          const { lat, lng } = event.target.getLatLng()
-          onChange([lat, lng])
-        }
-      }}
-    />
-  )
-}
+import { ClickMarker, type LatLng } from './map-shared'
 
 type MapPickerProps = {
   open: boolean
