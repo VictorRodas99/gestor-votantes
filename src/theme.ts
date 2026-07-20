@@ -124,6 +124,21 @@ const theme = createTheme({
   },
   // Defaults compartidos: evitan repetir sx/className en cada instancia.
   components: {
+    // El tamaño implícito del proyecto es 16px (body-md / `text-base` de
+    // Tailwind), no el `body1` de 18px que CssBaseline aplicaría por defecto.
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          fontSize: '1rem',
+          lineHeight: '24px'
+        }
+      }
+    },
+    // Mismo motivo: <Typography> sin `variant` debe medir 16px, no 18px.
+    // `body1` (18px) queda como opt-in explícito para texto destacado.
+    MuiTypography: {
+      defaultProps: { variant: 'body2' }
+    },
     // Tarjetas: sin sombra de MUI; usan borde 1px + sombra de tarjeta y radio 12px.
     MuiCard: {
       defaultProps: { elevation: 0 },

@@ -24,7 +24,7 @@ function ModuleCard({ module }: ModuleCardProps) {
           <module.Icon className="size-7" />
         </span>
         <Typography
-          variant="body1"
+          variant="inherit"
           component="span"
           className="font-semibold text-text-primary"
         >
