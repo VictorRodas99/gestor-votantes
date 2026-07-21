@@ -213,6 +213,34 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
   }
 }
 
+function appendCampo(form: FormData, clave: string, valor: unknown): void {
+  if (valor === null || valor === undefined) return
+
+  if (typeof valor === 'boolean') {
+    form.append(clave, valor ? '1' : '0')
+    return
+  }
+
+  if (typeof valor === 'object') {
+    for (const [subclave, subvalor] of Object.entries(valor)) {
+      appendCampo(form, `${clave}[${subclave}]`, subvalor)
+    }
+    return
+  }
+
+  form.append(clave, String(valor))
+}
+
+export function toVotanteFormData(data: WizardFormData): FormData {
+  const form = new FormData()
+
+  for (const [clave, valor] of Object.entries(toVotantePayload(data))) {
+    appendCampo(form, clave, valor)
+  }
+
+  return form
+}
+
 /**
  * todavía no se sabe el shape del response de la api después de hacer post
  * por eso el unknown como tipo
@@ -222,7 +250,7 @@ export const crearVotante = async (data: WizardFormData): Promise<unknown> => {
 
   try {
     raw = await api
-      .post(VOTANTE_ROUTES.post, { json: toVotantePayload(data) })
+      .post(VOTANTE_ROUTES.post, { body: toVotanteFormData(data) })
       .text()
   } catch (reason) {
     if (reason instanceof HTTPError) {
