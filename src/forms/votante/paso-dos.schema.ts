@@ -5,8 +5,8 @@ export const pasoDosSchema = z.object({
     .number({ error: 'Seleccione un local de votación' })
     .int()
     .positive(),
-  boleta: z.number({ error: 'La boleta es obligatoria' }).int().positive(),
-  talon: z.number({ error: 'El talón es obligatorio' }).int().positive(),
+  boleta: z.number().int().positive().optional(),
+  talon: z.number().int().positive().optional(),
   mesa: z.number().int().positive().optional(),
   orden: z.number().int().positive().optional(),
   afiliacion: z.boolean(),
