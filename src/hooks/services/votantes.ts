@@ -2,7 +2,8 @@ import {
   keepPreviousData,
   useInfiniteQuery,
   useMutation,
-  useQuery
+  useQuery,
+  useQueryClient
 } from '@tanstack/react-query'
 import {
   crearVotante,
@@ -56,12 +57,12 @@ export const useVotantesPaged = (
 }
 
 export const useCrearVotante = () => {
-  // const queryClient = useQueryClient()
+  const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: crearVotante
-    // onSuccess: () =>
-    //   queryClient.invalidateQueries({ queryKey: [BASE_VOTANTE_QUERY] })
+    mutationFn: crearVotante,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: [BASE_VOTANTE_QUERY] })
   })
 }
 
