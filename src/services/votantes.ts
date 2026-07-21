@@ -39,6 +39,9 @@ function mapVotante(raw: VotanteRaw): Votante {
     afiliado: toBoolean(raw.afiliacion),
     votoSeguro: toBoolean(raw.voto_seguro),
     requiereTransporte: toBoolean(raw.movil),
+    votoIntendente: toBoolean(raw.voto_intendente),
+    votoConcejal: toBoolean(raw.voto_concejal),
+    visitado: toBoolean(raw.visitado),
     localVotacionId: Number(raw.local_votacion_id),
     boleta: toNumeroOpcional(raw.boleta),
     talon: toNumeroOpcional(raw.talon),
@@ -50,7 +53,11 @@ function mapVotante(raw: VotanteRaw): Votante {
     direccion: raw.direccion.trim(),
     encargadoVisita: raw.encargado_visita,
     tipoVisita: raw.tipo_visita,
-    observacion: raw.observacion.trim()
+    observacion: raw.observacion.trim(),
+    familiar: toBoolean(raw.familiar),
+    inc: toBoolean(raw.inc),
+    valorInc: Number(raw.valor_inc) || 0,
+    referenteId: Number(raw.referente_id) || 0
   }
 }
 
@@ -152,6 +159,7 @@ export type VotantePayload = {
   fecha_nacimiento: string
   edad: number
   sexo: string
+  nacionalidad: string
   celular: string
   direccion: { calle: string; lat: number | null; lng: number | null }
   barrio_id: number
@@ -166,6 +174,7 @@ export type VotantePayload = {
   voto_intendente: boolean
   voto_concejal: boolean
   movil: boolean
+  visitado: boolean
   encargado_visita: string | null
   tipo_visita: string | null
   observacion: string
@@ -183,6 +192,7 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     fecha_nacimiento: data.fecha_nacimiento,
     edad: calcularEdad(data.fecha_nacimiento),
     sexo: data.sexo,
+    nacionalidad: data.nacionalidad ?? '',
     celular: data.celular ?? '',
     direccion: {
       calle: data.direccion?.calle ?? '',
@@ -201,6 +211,7 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     voto_intendente: data.voto_intendente,
     voto_concejal: data.voto_concejal,
     movil: data.movil,
+    visitado: data.visitado,
     encargado_visita: data.encargado_visita || null,
     tipo_visita: data.tipo_visita || null,
     observacion: data.observacion ?? '',
@@ -241,11 +252,16 @@ export function toVotanteFormData(data: WizardFormData): FormData {
   return form
 }
 
-/**
- * todavía no se sabe el shape del response de la api después de hacer post
- * por eso el unknown como tipo
- */
-export const crearVotante = async (data: WizardFormData): Promise<unknown> => {
+export type CrearVotanteResponse = {
+  success: true
+  message: string
+  /** PK del votante creado/actualizado. */
+  pkey: number
+}
+
+export const crearVotante = async (
+  data: WizardFormData
+): Promise<CrearVotanteResponse> => {
   let raw: string
 
   try {
@@ -262,12 +278,23 @@ export const crearVotante = async (data: WizardFormData): Promise<unknown> => {
     })
   }
 
+  let parsed: { success?: boolean; message?: string; pkey?: number | string }
   try {
-    return JSON.parse(raw)
+    parsed = JSON.parse(raw)
   } catch (reason) {
     throw new Error(
       raw.trim() || 'No pudimos guardar el votante. Intentá de nuevo.',
       { cause: reason }
     )
+  }
+
+  if (!parsed.success) {
+    throw new Error(parsed.message || 'No pudimos guardar el votante.')
+  }
+
+  return {
+    success: true,
+    message: parsed.message ?? 'Votante guardado',
+    pkey: Number(parsed.pkey)
   }
 }
