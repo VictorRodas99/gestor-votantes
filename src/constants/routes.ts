@@ -1,5 +1,6 @@
 export const VOTANTE_ROUTES = {
-  index: 'votantes'
+  index: 'votantes',
+  post: 'votaciones'
 } as const
 
 export const CATALOGO_ROUTES = {

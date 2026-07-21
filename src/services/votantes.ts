@@ -222,7 +222,7 @@ export const crearVotante = async (data: WizardFormData): Promise<unknown> => {
 
   try {
     raw = await api
-      .post(VOTANTE_ROUTES.index, { json: toVotantePayload(data) })
+      .post(VOTANTE_ROUTES.post, { json: toVotantePayload(data) })
       .text()
   } catch (reason) {
     if (reason instanceof HTTPError) {
