@@ -3,13 +3,19 @@ import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded
 import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded'
 import DirectionsCarRoundedIcon from '@mui/icons-material/DirectionsCarRounded'
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
+import HowToRegRoundedIcon from '@mui/icons-material/HowToRegRounded'
 import HowToVoteRoundedIcon from '@mui/icons-material/HowToVoteRounded'
 import Switch from '@mui/material/Switch'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { WizardFormData } from '../../forms/votante/wizard.schema'
 
 type ToggleName =
-  'afiliacion' | 'voto_seguro' | 'voto_intendente' | 'voto_concejal' | 'movil'
+  | 'afiliacion'
+  | 'voto_seguro'
+  | 'voto_intendente'
+  | 'voto_concejal'
+  | 'movil'
+  | 'visitado'
 
 type ToggleRow = {
   name: ToggleName
@@ -33,7 +39,8 @@ const TOGGLES: ToggleRow[] = [
     label: 'Necesita móvil',
     Icon: DirectionsCarRoundedIcon,
     accent: true
-  }
+  },
+  { name: 'visitado', label: 'Visitado', Icon: HowToRegRoundedIcon }
 ]
 
 /**
