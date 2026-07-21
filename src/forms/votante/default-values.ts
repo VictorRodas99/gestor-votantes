@@ -4,6 +4,7 @@ const pasoUnoDefaults = {
   nombre: '',
   fecha_nacimiento: '',
   sexo: 'M',
+  nacionalidad: '',
   celular: '',
   direccion: { calle: '', lat: undefined, lng: undefined },
   barrio_id: undefined,
@@ -21,7 +22,8 @@ const pasoDosDefaults = {
   voto_seguro: false,
   voto_intendente: false,
   voto_concejal: false,
-  movil: false
+  movil: false,
+  visitado: false
 } as const
 
 const pasoTresDefaults = {

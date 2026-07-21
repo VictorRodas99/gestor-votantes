@@ -25,6 +25,11 @@ export const pasoUnoSchema = z.object({
       `Debe ser mayor de ${EDAD_MINIMA} años`
     ),
   sexo: z.enum(['M', 'F'], { error: 'Seleccione el sexo' }),
+  /**
+   * viene del padrón y viaja en el POST solo para que el
+   * update no borre
+   */
+  nacionalidad: z.string().optional(),
 
   celular: z
     .string()

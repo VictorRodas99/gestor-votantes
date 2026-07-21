@@ -13,7 +13,8 @@ export const pasoDosSchema = z.object({
   voto_seguro: z.boolean(),
   voto_intendente: z.boolean(),
   voto_concejal: z.boolean(),
-  movil: z.boolean()
+  movil: z.boolean(),
+  visitado: z.boolean()
 })
 
 export type PasoDosFormData = z.infer<typeof pasoDosSchema>
