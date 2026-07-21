@@ -26,11 +26,16 @@ bun run format:check   # prettier --check
 
 No hay framework de tests configurado. Verificar con `bun run types` + `bun run lint`.
 
-DB local de desarrollo (opcional, estructura heredada `sysventas`, MySQL 5.7 vía Docker):
+Backend local de desarrollo (opcional, todo vía Docker):
 
 ```bash
-docker compose -f database/compose.yaml up -d   # db en :3306, phpMyAdmin en :8081
+docker compose -f database/compose.yaml up -d   # db :3306, phpMyAdmin :8081, API :8090
 ```
+
+Levanta tres servicios: MySQL 5.7 con la estructura heredada `sysventas`, phpMyAdmin, y la
+**API CodeIgniter 3 en PHP 7.2** (`database/api.Dockerfile`), que monta el código de `api/` como
+volumen — editar ahí se refleja sin rebuild. Config en `database/.env` (`API_PORT`, `CI_ENV`,
+credenciales de la DB). `api/` es un repo aparte (bitbucket `joncar/jr`) y está gitignored.
 
 ## Stack
 
@@ -66,8 +71,9 @@ Flujo estricto en tres capas, no saltárselas:
 - La documentación viva y verificada de la API está en `notes/api/` (gitignored, local).
 
 `API_URL` (`src/constants/config.ts`) apunta por defecto a producción
-(`https://elecciones.appbinario.com/...`); se puede override con `VITE_API_URL`. La DB Docker
-local es **otra base** distinta de la que sirve la API.
+(`https://elecciones.appbinario.com/...`); se puede override con `VITE_API_URL`. El `.env` local
+lo apunta al contenedor (`http://localhost:8090/api/Eleccionesapi`), que sí lee la DB Docker —
+comentar esa línea para volver a pegarle a producción.
 
 ## Routing y navegación (todo sale de `src/config/modules.ts`)
 
