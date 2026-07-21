@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { toast } from 'sonner'
 import { CIUDAD_COORDS_CENTER, MAP_DEFAULT_ZOOM } from '../../constants/map'
-import { ClickMarker, type LatLng } from './map-shared'
+import { ClickMarker, type LatLng, RecentrarMapa } from './map-shared'
 
 type MapPickerProps = {
   open: boolean
@@ -50,11 +50,7 @@ export default function MapPicker({
       return
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const punto: LatLng = [pos.coords.latitude, pos.coords.longitude]
-        setPosition(punto)
-        map?.setView(punto, MAP_DEFAULT_ZOOM)
-      },
+      (pos) => setPosition([pos.coords.latitude, pos.coords.longitude]),
       () => toast.error('No pudimos obtener la ubicación.')
     )
   }
@@ -82,6 +78,7 @@ export default function MapPicker({
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <ClickMarker position={position} onChange={setPosition} />
+          <RecentrarMapa position={position} />
         </MapContainer>
       </DialogContent>
       <DialogActions className="flex flex-col">
