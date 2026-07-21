@@ -25,6 +25,7 @@ dist-ssr
 
 database
 notes
+api
 
 bun.lock
 .env
