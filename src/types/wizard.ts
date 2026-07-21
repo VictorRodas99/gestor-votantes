@@ -6,4 +6,5 @@ export type WizardStepProps = {
   onNext?: () => void
   onPrevious?: () => void
   onSubmit?: () => void
+  isSubmitting?: boolean
 }
