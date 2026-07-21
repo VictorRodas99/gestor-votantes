@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { CIUDAD_COORDS_CENTER, MAP_DEFAULT_ZOOM } from '../../constants/map'
 import { useUbicacionVotante } from '../../hooks/use-ubicacion-votante'
-import { ClickMarker, type LatLng } from './map-shared'
+import { ClickMarker, type LatLng, RecentrarMapa } from './map-shared'
 
 export default function MapInline() {
   const {
@@ -49,6 +49,7 @@ export default function MapInline() {
               aplicarUbicacion(nextLat, nextLng)
             }
           />
+          <RecentrarMapa position={position} />
         </MapContainer>
 
         <div className="pointer-events-none absolute inset-x-3 top-3 z-1000 flex flex-col items-end gap-3">

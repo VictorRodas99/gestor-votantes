@@ -2,9 +2,29 @@ import L from 'leaflet'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-import { Marker, useMapEvents } from 'react-leaflet'
+import { useEffect } from 'react'
+import { Marker, useMap, useMapEvents } from 'react-leaflet'
+import { MAP_FOCUS_ZOOM } from '../../constants/map'
 
 export type LatLng = [number, number]
+
+export function RecentrarMapa({ position }: { position: LatLng | null }) {
+  const map = useMap()
+
+  const lat = position?.[0]
+  const lng = position?.[1]
+
+  useEffect(() => {
+    if (lat == null || lng == null) return
+    if (map.getBounds().contains([lat, lng])) return
+
+    map.flyTo([lat, lng], Math.max(map.getZoom(), MAP_FOCUS_ZOOM), {
+      duration: 0.6
+    })
+  }, [map, lat, lng])
+
+  return null
+}
 
 const markerDefaultIcon = L.icon({
   iconRetinaUrl: markerIcon2x,
