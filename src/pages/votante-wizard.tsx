@@ -70,21 +70,19 @@ function VotanteWizard() {
   // post último paso
   const handleSubmit = form.handleSubmit(async (data) => {
     try {
-      const response = await crearVotante.mutateAsync(data)
+      await toast
+        .promise(crearVotante.mutateAsync(data), {
+          loading: 'Guardando votante…',
+          success: (response) => response.message,
+          error: (reason) =>
+            reason instanceof Error ? reason.message : 'Error al guardar'
+        })
+        .unwrap()
 
-      console.log('[wizard votante] respuesta del POST:', response)
-      toast.info('la respuesta del post se muestra en la consola')
-    } catch (reason) {
-      toast.error(reason instanceof Error ? reason.message : 'Error al guardar')
+      navigate('/votantes')
+    } catch {
+      // ...
     }
-
-    // await toast.promise(crearVotante.mutateAsync(data), {
-    //   loading: 'Guardando votante…',
-    //   success: 'Votante guardado',
-    //   error: (reason) => reason.message
-    // }).unwrap()
-    //
-    // navigate('/votantes')
   })
 
   const currentIndex = STEP_ORDER.indexOf(step.current)
