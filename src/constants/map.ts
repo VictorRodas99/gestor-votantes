@@ -12,3 +12,15 @@ export const CIUDAD_COORDS_CENTER: [number, number] = [
 ]
 
 export const MAP_DEFAULT_ZOOM = 15
+export const MAP_FOCUS_ZOOM = 17
+
+// ~6 km alrededor del centro. Se deriva de CIUDAD_COORDS_CENTER (configurable
+// por env) para que la búsqueda acompañe si la app se usa en otra ciudad.
+const VIEWBOX_DELTA_GRADOS = 0.055
+
+export const CIUDAD_VIEWBOX = {
+  lonMin: CIUDAD_COORDS_CENTER_LNG - VIEWBOX_DELTA_GRADOS,
+  latMin: CIUDAD_COORDS_CENTER_LAT - VIEWBOX_DELTA_GRADOS,
+  lonMax: CIUDAD_COORDS_CENTER_LNG + VIEWBOX_DELTA_GRADOS,
+  latMax: CIUDAD_COORDS_CENTER_LAT + VIEWBOX_DELTA_GRADOS
+}
