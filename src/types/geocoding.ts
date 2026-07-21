@@ -24,3 +24,26 @@ export type AddressMeta = {
   barrioNombre: string | null
   ciudad: string | null
 }
+
+// Respuesta parcial de Nominatim `/search`. Igual que en la API principal,
+// `lat`/`lon` llegan como STRING: hay que castear en el map del servicio.
+export type NominatimSearchResult = {
+  place_id: number
+  lat: string
+  lon: string
+  name?: string
+  addresstype?: string
+  address?: NominatimAddress
+}
+
+/** Sugerencia de dirección lista para pintar en el Autocomplete. */
+export type DireccionSugerida = {
+  id: string
+  /** Línea principal: "Alberdi 1234" */
+  etiqueta: string
+  /** Línea secundaria: "Loma Clavel · Pilar" */
+  detalle: string
+  lat: number
+  lng: number
+  barrioNombre: string | null
+}
