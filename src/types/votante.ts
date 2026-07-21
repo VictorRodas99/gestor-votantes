@@ -37,6 +37,7 @@ export type VotanteRaw = {
   tipo_visita: string | null
   /** Vínculo votante↔referente (FK 1:N). `"0"` = sin asignar. */
   referente_id: string
+  visitado: string
 }
 
 /** Modelo de dominio: solo los campos que hoy usa el listado, ya casteados. */
@@ -53,6 +54,9 @@ export type Votante = {
   votoSeguro: boolean
   /** `movil` = necesita transporte para ir a votar el Día D. */
   requiereTransporte: boolean
+  votoIntendente: boolean
+  votoConcejal: boolean
+  visitado: boolean
   localVotacionId: number
   /** `null` cuando no está cargado en el padrón (opcionales en el alta). */
   boleta: number | null
@@ -70,4 +74,9 @@ export type Votante = {
   encargadoVisita: string | null
   tipoVisita: string | null
   observacion: string
+  familiar: boolean
+  inc: boolean
+  valorInc: number
+  /** `0` = sin referente asignado. */
+  referenteId: number
 }
