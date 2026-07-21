@@ -3,7 +3,7 @@ import { useFormContext, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import { matchBarrio } from '../forms/votante/barrio-match'
 import type { WizardFormData } from '../forms/votante/wizard.schema'
-import type { AddressMeta } from '../types/geocoding'
+import type { AddressMeta, DireccionSugerida } from '../types/geocoding'
 import { useBarrios } from './services/catalogos'
 import { useReverseGeocode } from './services/geocoding'
 
@@ -25,6 +25,29 @@ export function useUbicacionVotante() {
   const setCoords = (nextLat: number, nextLng: number) => {
     setValue('direccion.lat', nextLat, { shouldDirty: true })
     setValue('direccion.lng', nextLng, { shouldDirty: true })
+  }
+
+  /**
+   * Empareja el nombre de barrio que devolvió OSM con el catálogo y lo aplica.
+   * Nunca pisa un barrio ya elegido: a lo sumo lo sugiere.
+   */
+  const aplicarBarrio = (barrioNombre: string | null) => {
+    const match = matchBarrio(barrioNombre, barrios ?? [])
+    if (!match) return
+
+    const barrioActual = getValues('barrio_id')
+    if (match.exact && barrioActual == null) {
+      setValue('barrio_id', match.item.id, { shouldDirty: true })
+      toast.success(`Barrio: ${match.item.denominacion}`)
+    } else if (barrioActual !== match.item.id) {
+      toast(`¿Barrio: ${match.item.denominacion}?`, {
+        action: {
+          label: 'Usar',
+          onClick: () =>
+            setValue('barrio_id', match.item.id, { shouldDirty: true })
+        }
+      })
+    }
   }
 
   /**
@@ -57,22 +80,22 @@ export function useUbicacionVotante() {
       }
     }
 
-    const match = matchBarrio(meta.barrioNombre, barrios ?? [])
-    if (match) {
-      const barrioActual = getValues('barrio_id')
-      if (match.exact && barrioActual == null) {
-        setValue('barrio_id', match.item.id, { shouldDirty: true })
-        toast.success(`Barrio: ${match.item.denominacion}`)
-      } else if (barrioActual !== match.item.id) {
-        toast(`¿Barrio: ${match.item.denominacion}?`, {
-          action: {
-            label: 'Usar',
-            onClick: () =>
-              setValue('barrio_id', match.item.id, { shouldDirty: true })
-          }
-        })
-      }
-    }
+    aplicarBarrio(meta.barrioNombre)
+  }
+
+  /**
+   * Aplica una sugerencia elegida en el buscador de direcciones. A diferencia de
+   * `aplicarUbicacion`, **no** dispara reverse-geocoding: la respuesta de
+   * `/search` ya trae el `address`, y un reverse podría devolver un `road`
+   * distinto del que el usuario acaba de elegir y contradecirlo con un toast.
+   */
+  const aplicarSugerencia = (sugerencia: DireccionSugerida) => {
+    setValue('direccion.calle', sugerencia.etiqueta, {
+      shouldDirty: true,
+      shouldValidate: true
+    })
+    setCoords(sugerencia.lat, sugerencia.lng)
+    aplicarBarrio(sugerencia.barrioNombre)
   }
 
   const aplicarUbicacion = (nextLat: number, nextLng: number) => {
@@ -110,6 +133,7 @@ export function useUbicacionVotante() {
     locating,
     reverseIsPending: reverse.isPending,
     aplicarUbicacion,
+    aplicarSugerencia,
     capturarUbicacion
   }
 }
