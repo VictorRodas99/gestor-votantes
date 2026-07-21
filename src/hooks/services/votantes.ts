@@ -1,9 +1,11 @@
 import {
   keepPreviousData,
   useInfiniteQuery,
+  useMutation,
   useQuery
 } from '@tanstack/react-query'
 import {
+  crearVotante,
   getVotanteByCedula,
   getVotantes,
   type VotantesFilters
@@ -50,6 +52,16 @@ export const useVotantesPaged = (
     queryFn: () => getVotantes({ ...filters, page }),
     placeholderData: keepPreviousData,
     staleTime: VOTANTES_STALE_TIME
+  })
+}
+
+export const useCrearVotante = () => {
+  // const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: crearVotante
+    // onSuccess: () =>
+    //   queryClient.invalidateQueries({ queryKey: [BASE_VOTANTE_QUERY] })
   })
 }
 
