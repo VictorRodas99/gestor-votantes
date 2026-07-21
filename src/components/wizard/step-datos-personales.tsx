@@ -3,6 +3,8 @@ import Button from '@mui/material/Button'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { lazy, Suspense } from 'react'
 import { useFormContext, useWatch, type Path } from 'react-hook-form'
+import votanteWizardFormDefaults from '../../forms/votante/default-values'
+import { votanteAValoresWizard } from '../../forms/votante/prefill'
 import type { WizardFormData } from '../../forms/votante/wizard.schema'
 import type { Votante } from '../../types/votante'
 import type { WizardStepProps } from '../../types/wizard'
@@ -55,20 +57,10 @@ export default function StepDatosPersonales({
   const readOnlyIdentidad = origen === 'padron'
 
   const prefillDesdePadron = (votante: Votante) => {
-    form.setValue('cedula', votante.cedula)
-    form.setValue('apellido', votante.apellido)
-    form.setValue('nombre', votante.nombre)
-    form.setValue('fecha_nacimiento', votante.fechaNacimiento)
-    if (votante.sexo === 'M' || votante.sexo === 'F') {
-      form.setValue('sexo', votante.sexo)
-    }
-    if (votante.celular) form.setValue('celular', votante.celular)
-
-    if (votante.localVotacionId) {
-      form.setValue('local_votacion_id', votante.localVotacionId)
-    }
-    if (votante.boleta) form.setValue('boleta', votante.boleta)
-    if (votante.talon) form.setValue('talon', votante.talon)
+    form.reset({
+      ...votanteWizardFormDefaults,
+      ...votanteAValoresWizard(votante)
+    })
     onOrigenChange('padron')
   }
 
