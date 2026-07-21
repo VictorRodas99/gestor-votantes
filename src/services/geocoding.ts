@@ -2,9 +2,18 @@ import ky from 'ky'
 import {
   NOMINATIM_BASE_URL,
   NOMINATIM_LANG,
-  NOMINATIM_REVERSE_ZOOM
+  NOMINATIM_REVERSE_ZOOM,
+  NOMINATIM_SEARCH_LIMIT,
+  SUGERENCIAS_MAX
 } from '../constants/geocoding'
-import type { AddressMeta, NominatimReverseResponse } from '../types/geocoding'
+import { CIUDAD_COORDS_CENTER, CIUDAD_VIEWBOX } from '../constants/map'
+import { distanciaAprox } from '../lib/geo'
+import type {
+  AddressMeta,
+  DireccionSugerida,
+  NominatimReverseResponse,
+  NominatimSearchResult
+} from '../types/geocoding'
 
 const nominatim = ky.create({
   prefix: NOMINATIM_BASE_URL,
@@ -69,7 +78,93 @@ export const reverseGeocode = async (
         response.address.village ??
         null
     }
-  } catch {
+  } catch (error) {
+    console.warn('[geocoding] reverse falló', error)
     return null
+  }
+}
+
+const VIEWBOX = [
+  CIUDAD_VIEWBOX.lonMin,
+  CIUDAD_VIEWBOX.latMin,
+  CIUDAD_VIEWBOX.lonMax,
+  CIUDAD_VIEWBOX.latMax
+].join(',')
+
+const [CENTRO_LAT, CENTRO_LNG] = CIUDAD_COORDS_CENTER
+
+function mapSugerencia(
+  resultado: NominatimSearchResult
+): DireccionSugerida | null {
+  const etiqueta = extraerCalle(resultado.address) ?? resultado.name
+  if (!etiqueta) return null
+
+  const detalle = [extraerBarrio(resultado.address), resultado.address?.town]
+    .filter(Boolean)
+    .join(' · ')
+
+  return {
+    id: String(resultado.place_id),
+    etiqueta,
+    detalle,
+    lat: Number(resultado.lat),
+    lng: Number(resultado.lon),
+    barrioNombre: extraerBarrio(resultado.address)
+  }
+}
+
+const buscarCrudo = (query: string) =>
+  nominatim
+    .get('search', {
+      searchParams: {
+        q: query,
+        format: 'jsonv2',
+        addressdetails: 1,
+        limit: NOMINATIM_SEARCH_LIMIT,
+        viewbox: VIEWBOX,
+        // Sin `bounded` aparecerían calles homónimas de Asunción o Argentina.
+        bounded: 1,
+        'accept-language': NOMINATIM_LANG
+      }
+    })
+    .json<NominatimSearchResult[]>()
+
+export const buscarDirecciones = async (
+  query: string
+): Promise<DireccionSugerida[]> => {
+  const texto = query.trim()
+  if (!texto) return []
+
+  try {
+    let crudos = await buscarCrudo(texto)
+
+    // La cobertura de `house_number` en Pilar es parcial
+    const sinNumero = texto.replace(/\s+\d+\s*$/, '')
+    if (crudos.length === 0 && sinNumero !== texto) {
+      crudos = await buscarCrudo(sinNumero)
+    }
+
+    const sugerencias = crudos
+      .map(mapSugerencia)
+      .filter((s): s is DireccionSugerida => s !== null)
+      .sort(
+        (a, b) =>
+          distanciaAprox(a, { lat: CENTRO_LAT, lng: CENTRO_LNG }) -
+          distanciaAprox(b, { lat: CENTRO_LAT, lng: CENTRO_LNG })
+      )
+
+    // depup porque las calles se devuelven en varios `way`
+    const vistas = new Set<string>()
+    return sugerencias
+      .filter((s) => {
+        const clave = `${s.etiqueta}|${s.detalle}`
+        if (vistas.has(clave)) return false
+        vistas.add(clave)
+        return true
+      })
+      .slice(0, SUGERENCIAS_MAX)
+  } catch (error) {
+    console.warn('[geocoding] búsqueda falló', error)
+    return []
   }
 }
