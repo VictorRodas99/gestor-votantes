@@ -19,7 +19,8 @@ const GUIA_CAMPO = [
 
 export default function StepDatosVisita({
   onPrevious,
-  onSubmit
+  onSubmit,
+  isSubmitting
 }: WizardStepProps) {
   const { control } = useFormContext<WizardFormData>()
 
@@ -120,6 +121,8 @@ export default function StepDatosVisita({
           variant="contained"
           size="large"
           fullWidth
+          loading={isSubmitting}
+          loadingPosition="start"
           onClick={onSubmit}
           startIcon={<CheckCircleRoundedIcon />}
           className="lg:w-auto lg:min-w-40 lg:flex-none"
