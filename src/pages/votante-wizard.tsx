@@ -12,7 +12,7 @@ import {
   wizardSchema,
   type WizardFormData
 } from '../forms/votante/wizard.schema'
-import { calcularEdad } from '../lib/date'
+import { useCrearVotante } from '../hooks/services/votantes'
 import type { WizardStepProps } from '../types/wizard'
 
 const STEP = Object.freeze({
@@ -53,6 +53,8 @@ function VotanteWizard() {
     defaultValues: votanteWizardFormDefaults
   })
 
+  const crearVotante = useCrearVotante()
+
   const handleNextStep = () => {
     const from = step.current
     const nextIndex = STEP_ORDER.indexOf(from) + 1
@@ -66,48 +68,23 @@ function VotanteWizard() {
   }
 
   // post último paso
-  const handleSubmit = form.handleSubmit((data) => {
-    console.log('[wizard votante] body a enviar:', {
-      cedula: data.cedula,
-      apellido: data.apellido,
-      nombre: data.nombre,
-      fecha_nacimiento: data.fecha_nacimiento,
-      edad: calcularEdad(data.fecha_nacimiento),
-      sexo: data.sexo,
-      celular: data.celular ?? '',
-      // `direccion` como objeto: el backend lo reparte a las columnas `direccion`
-      // (calle) y `mapa` ("lat,lng").
-      direccion: {
-        calle: data.direccion?.calle ?? '',
-        lat: data.direccion?.lat ?? null,
-        lng: data.direccion?.lng ?? null
-      },
-      barrio_id: data.barrio_id ?? 0,
-      referente_id: data.referente_id ?? 0,
-      // Paso 2 · Datos de votación (numéricos; booleanos nativos, confirmado §0).
-      local_votacion_id: data.local_votacion_id,
-      boleta: data.boleta,
-      talon: data.talon,
-      mesa: data.mesa ?? null,
-      orden: data.orden ?? null,
-      afiliacion: data.afiliacion,
-      voto_seguro: data.voto_seguro,
-      voto_intendente: data.voto_intendente,
-      voto_concejal: data.voto_concejal,
-      movil: data.movil,
+  const handleSubmit = form.handleSubmit(async (data) => {
+    try {
+      const response = await crearVotante.mutateAsync(data)
 
-      // paso 3
-      encargado_visita: data.encargado_visita || null,
-      tipo_visita: data.tipo_visita || null,
-      observacion: data.observacion ?? '',
-      familiar: data.familiar,
-      inc: data.inc,
-      valor_inc: data.inc ? data.valor_inc : 0,
-      nuevo_referente: data.nuevo_referente
-        ? { ...data.nuevo_referente, barrio_id: data.barrio_id ?? 0 }
-        : null
-    })
-    toast.warning('Falta POST: el body se muestra en la consola.')
+      console.log('[wizard votante] respuesta del POST:', response)
+      toast.info('la respuesta del post se muestra en la consola')
+    } catch (reason) {
+      toast.error(reason instanceof Error ? reason.message : 'Error al guardar')
+    }
+
+    // await toast.promise(crearVotante.mutateAsync(data), {
+    //   loading: 'Guardando votante…',
+    //   success: 'Votante guardado',
+    //   error: (reason) => reason.message
+    // }).unwrap()
+    //
+    // navigate('/votantes')
   })
 
   const currentIndex = STEP_ORDER.indexOf(step.current)
@@ -117,7 +94,8 @@ function VotanteWizard() {
   const stepProps: WizardStepProps = {
     onNext: isLast ? undefined : handleNextStep,
     onPrevious: isFirst ? undefined : handlePrevStep,
-    onSubmit: isLast ? handleSubmit : undefined
+    onSubmit: isLast ? handleSubmit : undefined,
+    isSubmitting: crearVotante.isPending
   }
 
   const renderStep = (): ReactNode => {
