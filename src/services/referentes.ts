@@ -34,3 +34,18 @@ export const getReferentes = async (search = ''): Promise<Referente[]> => {
     return []
   }
 }
+
+export const getReferentePorId = async (
+  id: number
+): Promise<Referente | null> => {
+  try {
+    const response = await api
+      .get(REFERENTE_ROUTES.index, { searchParams: { id, per_page: 1 } })
+      .json<PaginatedResponse<ReferenteRaw>>()
+
+    const raw = response.data[0]
+    return raw ? mapReferente(raw) : null
+  } catch {
+    return null
+  }
+}
