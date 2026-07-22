@@ -66,8 +66,8 @@ function mapVotante(raw: VotanteRaw): Votante {
  * Server-side REALES hoy (notes/api/documentation.md §5.2): `cedula` (exacta),
  * `apellido`/`nombre` (LIKE) y `localVotacionId` (FK exacta).
  *
- * `votoSeguro` / `afiliacion` / `movil` la API los IGNORA hoy; se envían
- * igual (el server los honrará cuando el proveedor los habilite). Ver
+ * `votoSeguro` / `afiliacion` / `movil` / `visitado` la API los IGNORA hoy; se
+ * envían igual (el server los honrará cuando el proveedor los habilite). Ver
  * `pendientes-server.md` §1.
  */
 export type VotantesFilters = {
@@ -78,6 +78,7 @@ export type VotantesFilters = {
   votoSeguro?: boolean
   afiliacion?: boolean
   movil?: boolean
+  visitado?: boolean
   page?: number
   perPage?: number
 }
@@ -99,6 +100,7 @@ export const getVotantes = async (
     votoSeguro,
     afiliacion,
     movil,
+    visitado,
     page = 1,
     perPage = VOTANTES_PER_PAGE
   } = filters
@@ -116,6 +118,7 @@ export const getVotantes = async (
   if (votoSeguro != null) searchParams.voto_seguro = votoSeguro ? 1 : 0
   if (afiliacion) searchParams.afiliacion = 1
   if (movil) searchParams.movil = 1
+  if (visitado != null) searchParams.visitado = visitado ? 1 : 0
 
   try {
     const response = await api

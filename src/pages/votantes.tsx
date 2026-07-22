@@ -42,7 +42,9 @@ function VotantesPage() {
 
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebounce(search, 400)
-  const [filters, setFilters] = useState<VotantesFilterValue>({})
+  const [filters, setFilters] = useState<VotantesFilterValue>({
+    visitado: true
+  })
   const [searchParams, setSearchParams] = useSearchParams()
 
   const selectedCedula = searchParams.get('ci')
@@ -52,6 +54,7 @@ function VotantesPage() {
   const queryFilters: VotantesFilters = {
     ...buildSearchFilters(debouncedSearch),
     localVotacionId: filters.localVotacionId,
+    visitado: filters.visitado ?? true,
     ...estado?.filters
   }
 

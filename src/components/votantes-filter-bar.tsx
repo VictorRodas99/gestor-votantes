@@ -1,7 +1,9 @@
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded'
 import Button from '@mui/material/Button'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import Switch from '@mui/material/Switch'
 import { useState, type MouseEvent } from 'react'
 import { ESTADO_OPTIONS, type EstadoValue } from '../constants/votante'
 import { useLocalesVotacion } from '../hooks/services/catalogos'
@@ -10,6 +12,7 @@ import { truncate } from '../lib/format'
 export type VotantesFilterValue = {
   localVotacionId?: number
   estado?: EstadoValue
+  visitado?: boolean
 }
 
 type VotantesFilterBarProps = {
@@ -133,6 +136,19 @@ function VotantesFilterBar({ value, onChange }: VotantesFilterBarProps) {
           ))
         ]}
       </FilterMenu>
+
+      <FormControlLabel
+        className="shrink-0"
+        control={
+          <Switch
+            checked={value.visitado ?? true}
+            onChange={(event) =>
+              onChange({ ...value, visitado: event.target.checked })
+            }
+          />
+        }
+        label="Visitados"
+      />
     </div>
   )
 }
