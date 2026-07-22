@@ -37,7 +37,8 @@ export default function ReferenteField() {
   const referenteError = errors.referente_id?.message
 
   const yaAsignado = referenteId != null || nuevoReferente != null
-  const [abierto, setAbierto] = useState(yaAsignado)
+  const [abiertoManual, setAbiertoManual] = useState(false)
+  const abierto = yaAsignado || abiertoManual
   const [modo, setModo] = useState<Modo>(nuevoReferente ? 'crear' : 'elegir')
 
   const [busqueda, setBusqueda] = useState('')
@@ -74,7 +75,7 @@ export default function ReferenteField() {
     return (
       <button
         type="button"
-        onClick={() => setAbierto(true)}
+        onClick={() => setAbiertoManual(true)}
         className={`flex items-center gap-3 rounded-md border bg-surface-container-low px-4 py-3 text-left ${
           referenteError ? 'border-error' : 'border-divider'
         }`}
@@ -86,7 +87,6 @@ export default function ReferenteField() {
           <span className="text-body-md font-semibold text-text-primary">
             Agregar referente
           </span>
-          {/* Antes: "Opcional". Ahora es obligatorio (§ referente requerido). */}
           <span
             className={`text-label-sm ${
               referenteError ? 'text-error' : 'text-text-secondary'
@@ -110,7 +110,7 @@ export default function ReferenteField() {
           aria-label="Quitar referente"
           onClick={() => {
             limpiar()
-            setAbierto(false)
+            setAbiertoManual(false)
           }}
         >
           <CloseRoundedIcon />
