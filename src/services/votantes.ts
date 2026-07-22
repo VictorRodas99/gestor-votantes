@@ -4,7 +4,6 @@ import { VOTANTE_ROUTES } from '../constants/routes'
 import type { ReferenteFormData } from '../forms/votante/referente.schema'
 import type { WizardFormData } from '../forms/votante/wizard.schema'
 import { calcularEdad } from '../lib/date'
-import { toTitleCase } from '../lib/format'
 import api from '../lib/http'
 import type { PaginatedResponse } from '../types/api'
 import type { Votante, VotanteRaw } from '../types/votante'
@@ -26,8 +25,8 @@ function toNumeroOpcional(value: string | null): number | null {
 
 /** Castea un registro crudo (todo string) al modelo de dominio ya tipado. */
 function mapVotante(raw: VotanteRaw): Votante {
-  const nombre = toTitleCase(raw.nombre)
-  const apellido = toTitleCase(raw.apellido)
+  const nombre = raw.nombre.trim()
+  const apellido = raw.apellido.trim()
 
   return {
     id: Number(raw.id),

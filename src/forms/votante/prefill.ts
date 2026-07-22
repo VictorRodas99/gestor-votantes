@@ -1,4 +1,5 @@
 import type { DefaultValues } from 'react-hook-form'
+import { parsearDireccion } from '../../lib/direccion'
 import type { Votante } from '../../types/votante'
 import type { WizardFormData } from './wizard.schema'
 
@@ -22,7 +23,7 @@ export function votanteAValoresWizard(
     sexo: votante.sexo === 'F' ? 'F' : 'M',
     nacionalidad: votante.nacionalidad,
     celular: votante.celular || '',
-    direccion: { calle: votante.direccion || '' },
+    direccion: parsearDireccion(votante.direccion || ''),
     referente_id: votante.referenteId || undefined,
 
     local_votacion_id: votante.localVotacionId || undefined,

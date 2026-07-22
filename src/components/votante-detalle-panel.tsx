@@ -4,6 +4,7 @@ import Tabs from '@mui/material/Tabs'
 import { useState, type ReactNode } from 'react'
 import { useLocalesVotacion } from '../hooks/services/catalogos'
 import { useVotante } from '../hooks/services/votantes'
+import { parsearDireccion } from '../lib/direccion'
 import { formatCedula, getInitials } from '../lib/format'
 import EmptyState from './empty-state'
 import ErrorState from './error-state'
@@ -128,7 +129,10 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
             value={SEXO_LABEL[votante.sexo] ?? votante.sexo}
           />
           <DetailField label="Celular" value={votante.celular} />
-          <DetailField label="Dirección" value={votante.direccion} />
+          <DetailField
+            label="Dirección"
+            value={parsearDireccion(votante.direccion).calle}
+          />
         </TabPanel>
       )}
 
