@@ -7,7 +7,7 @@ import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Controller,
   useFormContext,
@@ -17,7 +17,10 @@ import {
 import { useDebounce } from 'use-debounce'
 import type { WizardFormData } from '../../forms/votante/wizard.schema'
 import { useSectores } from '../../hooks/services/catalogos'
-import { useReferentesSearch } from '../../hooks/services/referentes'
+import {
+  useReferentePorId,
+  useReferentesSearch
+} from '../../hooks/services/referentes'
 import type { Referente } from '../../types/referente'
 import BarrioSelect from './barrio-select'
 import { FieldShell } from './form-field'
@@ -33,6 +36,18 @@ export default function ReferenteField() {
   const { control, setValue } = useFormContext<WizardFormData>()
   const referenteId = useWatch({ control, name: 'referente_id' })
   const nuevoReferente = useWatch({ control, name: 'nuevo_referente' })
+  const barrioId = useWatch({ control, name: 'barrio_id' })
+
+  const { data: referentePrecargado } = useReferentePorId(
+    referenteId != null && barrioId == null ? referenteId : undefined
+  )
+
+  useEffect(() => {
+    if (referentePrecargado?.barrioId) {
+      setValue('barrio_id', referentePrecargado.barrioId)
+    }
+  }, [referentePrecargado, setValue])
+
   const { errors } = useFormState({ control, name: 'referente_id' })
   const referenteError = errors.referente_id?.message
 
