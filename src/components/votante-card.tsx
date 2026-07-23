@@ -30,7 +30,7 @@ function VotanteCard({ votante, onSelect }: VotanteCardProps) {
             className="size-14 text-body-md font-semibold text-white"
             sx={{ bgcolor: getAvatarColor(votante.cedula) }}
           >
-            {getInitials(votante.nombre, votante.apellido)}
+            {getInitials(votante.nombreCompleto)}
           </Avatar>
 
           <div className="min-w-0 flex-1">

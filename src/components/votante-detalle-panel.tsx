@@ -93,7 +93,7 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-4">
         <Avatar className="size-14 bg-primary text-body-md font-semibold text-white">
-          {getInitials(votante.nombre, votante.apellido)}
+          {getInitials(votante.nombreCompleto)}
         </Avatar>
         <div className="min-w-0 flex-1">
           <p className="text-title-md truncate font-semibold text-text-primary">
