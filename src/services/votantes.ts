@@ -4,6 +4,7 @@ import { VOTANTE_ROUTES } from '../constants/routes'
 import type { ReferenteFormData } from '../forms/votante/referente.schema'
 import type { WizardFormData } from '../forms/votante/wizard.schema'
 import { calcularEdad } from '../lib/date'
+import { appendCampo } from '../lib/form-data'
 import api from '../lib/http'
 import type { PaginatedResponse } from '../types/api'
 import type { Votante, VotanteRaw } from '../types/votante'
@@ -221,24 +222,6 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
       ? { ...data.nuevo_referente, barrio_id: data.barrio_id ?? 0 }
       : null
   }
-}
-
-function appendCampo(form: FormData, clave: string, valor: unknown): void {
-  if (valor === null || valor === undefined) return
-
-  if (typeof valor === 'boolean') {
-    form.append(clave, valor ? '1' : '0')
-    return
-  }
-
-  if (typeof valor === 'object') {
-    for (const [subclave, subvalor] of Object.entries(valor)) {
-      appendCampo(form, `${clave}[${subclave}]`, subvalor)
-    }
-    return
-  }
-
-  form.append(clave, String(valor))
 }
 
 export function toVotanteFormData(data: WizardFormData): FormData {
