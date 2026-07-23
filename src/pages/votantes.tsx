@@ -17,20 +17,9 @@ import VotantesFilterBar, {
 import VotantesListDesktop from '../components/votantes-list-desktop'
 import VotantesListMobile from '../components/votantes-list-mobile'
 import { ESTADO_OPTIONS } from '../constants/votante'
+import { buildSearchFilters } from '../lib/votante-search'
 import type { VotantesFilters } from '../services/votantes'
 import type { Votante } from '../types/votante'
-
-// Si el texto de búsqueda son solo dígitos (con puntos/espacios) → es una cédula
-// (filtro exacto)
-function buildSearchFilters(search: string): Partial<VotantesFilters> {
-  const trimmed = search.trim()
-  if (!trimmed) return {}
-
-  const digits = trimmed.replace(/\D/g, '')
-  const isCedula = digits.length > 0 && /^[\d.\s]+$/.test(trimmed)
-
-  return isCedula ? { cedula: digits } : { apellido: trimmed }
-}
 
 const handleExport = () =>
   toast('La exportación de votantes está en construcción.')
