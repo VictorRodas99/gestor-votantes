@@ -4,27 +4,10 @@ import Card from '@mui/material/Card'
 import CardActionArea from '@mui/material/CardActionArea'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import { getAvatarColor } from '../lib/avatar-color'
 import { formatCedula, getInitials } from '../lib/format'
 import type { Votante } from '../types/votante'
 import VotanteChips from './votante-chips'
-
-// Paleta determinista para el avatar: cada votante siempre cae en el mismo
-// color (por su cédula), dando variedad visual sin ser aleatorio entre renders.
-const AVATAR_COLORS = [
-  'var(--mui-palette-primary-main)',
-  'var(--mui-palette-primary-light)',
-  'var(--mui-palette-success-main)',
-  'var(--mui-palette-secondary-dark)',
-  '#5b3d8a'
-]
-
-function getAvatarColor(seed: string): string {
-  let hash = 0
-  for (let i = 0; i < seed.length; i++) {
-    hash = (hash + seed.charCodeAt(i)) % AVATAR_COLORS.length
-  }
-  return AVATAR_COLORS[hash]
-}
 
 type VotanteCardProps = {
   votante: Votante
