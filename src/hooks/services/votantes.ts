@@ -5,6 +5,7 @@ import {
   useQuery,
   useQueryClient
 } from '@tanstack/react-query'
+import { buildSearchFilters } from '../../lib/votante-search'
 import {
   crearVotante,
   getVotanteByCedula,
@@ -14,6 +15,22 @@ import {
 
 export const BASE_VOTANTE_QUERY = 'votantes'
 const VOTANTES_STALE_TIME = 1000 * 30 // 30 secs
+const VOTANTES_BUSQUEDA_PER_PAGE = 15
+
+/**
+ * Búsqueda de votante para la asignación. Sin filtro de visitado.
+ */
+export const useVotantesBusqueda = (search: string) => {
+  const filters = buildSearchFilters(search)
+
+  return useQuery({
+    queryKey: [BASE_VOTANTE_QUERY, 'busqueda', search],
+    queryFn: () =>
+      getVotantes({ ...filters, perPage: VOTANTES_BUSQUEDA_PER_PAGE }),
+    enabled: search.trim().length > 0,
+    staleTime: VOTANTES_STALE_TIME
+  })
+}
 
 /** Cédula válida para disparar la búsqueda de prefill (5–8 dígitos). */
 const CEDULA_BUSCABLE = /^\d{5,8}$/
