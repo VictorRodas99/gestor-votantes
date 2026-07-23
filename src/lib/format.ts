@@ -32,12 +32,16 @@ export function toTitleCase(text: string): string {
 }
 
 /**
- * Iniciales para el avatar: primera letra del nombre + primera del apellido
- * (`"SAIDY", "ABDO"` → `"SA"`). Cae a una sola letra si falta alguno.
+ * Iniciales para el avatar a partir del nombre completo: primera letra de la
+ * primera y de la última palabra (`"Saidy Abdo"` → `"SA"`). Cae a una sola letra
+ * si hay un solo término.
  */
-export function getInitials(nombre: string, apellido: string): string {
-  const first = nombre.trim().charAt(0)
-  const last = apellido.trim().charAt(0)
+export function getInitials(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return '?'
+
+  const first = parts[0].charAt(0)
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : ''
 
   return `${first}${last}`.toUpperCase() || '?'
 }
