@@ -63,12 +63,10 @@ function mapVotante(raw: VotanteRaw): Votante {
 /**
  * Filtros del listado.
  *
- * Server-side REALES hoy (notes/api/documentation.md §5.2): `cedula` (exacta),
- * `apellido`/`nombre` (LIKE) y `localVotacionId` (FK exacta).
- *
- * `votoSeguro` / `afiliacion` / `movil` / `visitado` la API los IGNORA hoy; se
- * envían igual (el server los honrará cuando el proveedor los habilite). Ver
- * `pendientes-server.md` §1.
+ * Todos filtran server-side hoy (notes/api/documentation.md §5.2, re-test
+ * 22-jul): `cedula` (exacta), `apellido`/`nombre` (LIKE), `localVotacionId`
+ * (FK exacta) y los exactos `votoSeguro` / `afiliacion` / `movil` / `visitado`
+ * (el proveedor los habilitó el 17/22-jul; ver `pendientes-server.md` §1-§2).
  */
 export type VotantesFilters = {
   cedula?: string
@@ -114,7 +112,6 @@ export const getVotantes = async (
   if (nombre) searchParams.nombre = nombre
   if (localVotacionId != null) searchParams.local_votacion_id = localVotacionId
 
-  // el server ignora hoy esto
   if (votoSeguro != null) searchParams.voto_seguro = votoSeguro ? 1 : 0
   if (afiliacion) searchParams.afiliacion = 1
   if (movil) searchParams.movil = 1
