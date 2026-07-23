@@ -11,6 +11,29 @@ const api = ky.create({
     jitter: true
   },
   hooks: {
+    beforeRequest: [
+      // loguear termporalmente los body
+      async ({ request }) => {
+        if (!import.meta.env.DEV || request.method !== 'POST') return
+
+        const { pathname } = new URL(request.url)
+        if (!pathname.includes('puntero')) return
+
+        let body: unknown
+        try {
+          const form = await request.clone().formData()
+          body = Object.fromEntries(form.entries())
+        } catch {
+          try {
+            body = await request.clone().text()
+          } catch {
+            body = '(sin body legible)'
+          }
+        }
+
+        console.log(`[punteros] POST ${pathname}`, body)
+      }
+    ],
     beforeError: [
       async (state) => {
         const { error } = state
