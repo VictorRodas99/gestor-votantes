@@ -12,3 +12,14 @@ export const CATALOGO_ROUTES = {
 export const REFERENTE_ROUTES = {
   index: 'referentes'
 } as const
+
+export const PUNTERO_ROUTES = {
+  index: 'punteros',
+  post: 'punteros'
+} as const
+
+export const ASIGNACION_PUNTERO_ROUTES = {
+  index: 'votantes_punteros',
+  post: 'votantes_punteros',
+  delete: 'votantes_punteros_eliminar'
+} as const
