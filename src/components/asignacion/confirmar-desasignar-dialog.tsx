@@ -27,7 +27,8 @@ function ConfirmarDesasignarDialog({
       <DialogTitle>Quitar puntero</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          «{punteroNombre}» dejará de estar asignado a «{votanteNombre}».
+          <span className="font-semibold">{punteroNombre}</span> dejará de estar
+          asignado a <span className="font-semibold">{votanteNombre}</span>.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
