@@ -22,7 +22,15 @@ function mapPuntero(raw: PunteroRaw): Puntero {
   }
 }
 
-export const getPunteros = async (search = ''): Promise<Puntero[]> => {
+export type PunterosFilters = {
+  barrioId?: number
+  sectorId?: number
+}
+
+export const getPunteros = async (
+  search = '',
+  filtros: PunterosFilters = {}
+): Promise<Puntero[]> => {
   const searchParams: Record<string, string | number> = {
     per_page: PUNTEROS_PER_PAGE
   }
@@ -34,6 +42,12 @@ export const getPunteros = async (search = ''): Promise<Puntero[]> => {
     if (isCedula) searchParams.cedula = digits
     else searchParams.nombre_apellido = trimmed
   }
+
+  // Pendiente-server: el backend hoy IGNORA estos filtros. Se envían igual para
+  // honrarlos cuando el proveedor los habilite (ver notes/plans/responsive/
+  // asignacion-punteros-responsive.md §5.3). No se filtra en cliente.
+  if (filtros.barrioId != null) searchParams.barrio_id = filtros.barrioId
+  if (filtros.sectorId != null) searchParams.sector_id = filtros.sectorId
 
   try {
     const response = await api
