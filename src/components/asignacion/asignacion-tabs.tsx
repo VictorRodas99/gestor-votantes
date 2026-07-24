@@ -6,16 +6,26 @@ export type AsignacionTab = 'punteros' | 'brigadas'
 type AsignacionTabsProps = {
   value: AsignacionTab
   onChange: (tab: AsignacionTab) => void
+  variant?: 'mobile' | 'desktop'
 }
 
-/** Tabs planas full-width con indicator (diseño §0), ligadas a `?tab=`. */
-function AsignacionTabs({ value, onChange }: AsignacionTabsProps) {
+function AsignacionTabs({
+  value,
+  onChange,
+  variant = 'mobile'
+}: AsignacionTabsProps) {
+  const esDesktop = variant === 'desktop'
+
   return (
     <Tabs
       value={value}
       onChange={(_, tab: AsignacionTab) => onChange(tab)}
-      variant="fullWidth"
-      className="sticky top-0 z-10 border-b border-divider bg-surface"
+      variant={esDesktop ? 'standard' : 'fullWidth'}
+      className={
+        esDesktop
+          ? 'shrink-0'
+          : 'sticky top-0 z-10 border-b border-divider bg-surface'
+      }
     >
       <Tab value="punteros" label="Punteros" />
       <Tab value="brigadas" label="Brigadas" />
