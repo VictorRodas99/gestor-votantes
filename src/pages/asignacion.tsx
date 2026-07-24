@@ -1,4 +1,7 @@
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { useSearchParams } from 'react-router-dom'
+import AsignacionDesktop from '../components/asignacion/asignacion-desktop'
 import AsignacionTabs, {
   type AsignacionTab
 } from '../components/asignacion/asignacion-tabs'
@@ -73,6 +76,8 @@ function VistaAsignacion({ cedula }: { cedula: string }) {
 }
 
 function AsignacionPage() {
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
   const [searchParams, setSearchParams] = useSearchParams()
   const { recientes, registrar } = useRecientesAsignacion()
 
@@ -80,10 +85,9 @@ function AsignacionPage() {
   const cedula = searchParams.get('ci')
 
   const cambiarTab = (siguiente: AsignacionTab) =>
-    setSearchParams(
-      siguiente === 'punteros' ? {} : { tab: siguiente },
-      { replace: true }
-    )
+    setSearchParams(siguiente === 'punteros' ? {} : { tab: siguiente }, {
+      replace: true
+    })
 
   const seleccionar = (reciente: VotanteReciente) => {
     registrar(reciente)
@@ -95,6 +99,10 @@ function AsignacionPage() {
       cedula: votante.cedula,
       nombreCompleto: votante.nombreCompleto
     })
+
+  if (isDesktop) {
+    return <AsignacionDesktop tab={tab} onTab={cambiarTab} />
+  }
 
   return (
     <div className="flex flex-col gap-4">
