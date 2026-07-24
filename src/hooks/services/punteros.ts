@@ -2,16 +2,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   crearPuntero,
   getPunteroPorId,
-  getPunteros
+  getPunteros,
+  type PunterosFilters
 } from '../../services/punteros'
 
 export const BASE_PUNTERO_QUERY = 'punteros'
 const PUNTEROS_STALE_TIME = 1000 * 60 * 5 // 5 min
 
-export const usePunterosSearch = (search: string) => {
+export const usePunterosSearch = (
+  search: string,
+  filtros?: PunterosFilters
+) => {
   return useQuery({
-    queryKey: [BASE_PUNTERO_QUERY, 'search', search],
-    queryFn: () => getPunteros(search),
+    queryKey: [BASE_PUNTERO_QUERY, 'search', search, filtros ?? {}],
+    queryFn: () => getPunteros(search, filtros),
     staleTime: PUNTEROS_STALE_TIME
   })
 }

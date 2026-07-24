@@ -68,7 +68,9 @@ export const usePunterosAsignados = (votanteId?: number) => {
 
   const isPending =
     asignacionesQuery.isPending ||
-    punterosQueries.some((query) => query.isPending && query.fetchStatus !== 'idle')
+    punterosQueries.some(
+      (query) => query.isPending && query.fetchStatus !== 'idle'
+    )
 
   const isError =
     asignacionesQuery.isError || punterosQueries.some((query) => query.isError)
@@ -79,6 +81,30 @@ export const usePunterosAsignados = (votanteId?: number) => {
     isError,
     refetch: asignacionesQuery.refetch
   }
+}
+
+/**
+ * Estado de asignación (binario) de varios votantes a la vez. Reusa la MISMA
+ * query key que `useAsignacionesPunteros` → la caché se comparte con el panel
+ * de gestión: asignar/quitar invalida y refresca ambos. Devuelve un `Map`
+ * `votanteId → tiene ≥1 puntero`; los ids aún cargando no están en el `Map`.
+ */
+export const useEstadosAsignacion = (votanteIds: number[]) => {
+  const results = useQueries({
+    queries: votanteIds.map((votanteId) => ({
+      queryKey: [BASE_ASIGNACION_PUNTERO_QUERY, votanteId],
+      queryFn: () => getAsignacionesPunteros(votanteId),
+      staleTime: ASIGNACION_STALE_TIME
+    }))
+  })
+
+  const estados = new Map<number, boolean>()
+  votanteIds.forEach((votanteId, index) => {
+    const data = results[index]?.data
+    if (data) estados.set(votanteId, data.length > 0)
+  })
+
+  return { estados }
 }
 
 export const useAsignarPuntero = () => {
