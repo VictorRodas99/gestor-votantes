@@ -2,7 +2,13 @@ import type { Votante } from '../types/votante'
 
 // Chips del "estado de compromiso" del votante.
 
-function Pill({ label, className }: { label: string; className: string }) {
+export function Pill({
+  label,
+  className
+}: {
+  label: string
+  className: string
+}) {
   return (
     <span
       className={`inline-block rounded-full px-3 py-1 text-label-md font-medium ${className}`}
