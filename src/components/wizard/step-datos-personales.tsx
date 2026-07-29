@@ -3,9 +3,13 @@ import Button from '@mui/material/Button'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { lazy, Suspense } from 'react'
 import { useFormContext, useWatch, type Path } from 'react-hook-form'
-import votanteWizardFormDefaults from '../../forms/votante/default-values'
+import crearValoresPorDefecto from '../../forms/votante/default-values'
 import { votanteAValoresWizard } from '../../forms/votante/prefill'
-import type { WizardFormData } from '../../forms/votante/wizard.schema'
+import { validarPaso } from '../../forms/votante/validar-paso'
+import {
+  pasoUnoCompletoSchema,
+  type WizardFormData
+} from '../../forms/votante/wizard.schema'
 import type { Votante } from '../../types/votante'
 import type { WizardStepProps } from '../../types/wizard'
 import BarrioSelect from './barrio-select'
@@ -58,14 +62,18 @@ export default function StepDatosPersonales({
 
   const prefillDesdePadron = (votante: Votante) => {
     form.reset({
-      ...votanteWizardFormDefaults,
+      ...crearValoresPorDefecto(),
       ...votanteAValoresWizard(votante)
     })
     onOrigenChange('padron')
   }
 
   const handleNext = async () => {
-    const valido = await form.trigger(PASO_UNO_FIELDS)
+    const valido = await validarPaso(
+      form,
+      pasoUnoCompletoSchema,
+      PASO_UNO_FIELDS
+    )
     if (valido) onNext?.()
   }
 
