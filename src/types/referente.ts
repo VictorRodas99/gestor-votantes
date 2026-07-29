@@ -7,6 +7,8 @@ export type ReferenteRaw = {
   afiliacion: string
   barrio_id: string
   sector_id: string
+  /** Opcional: un deploy viejo del server puede no devolverlo. */
+  user_id?: string
 }
 
 /** Modelo de dominio de un referente ya casteado. */
@@ -18,4 +20,6 @@ export type Referente = {
   afiliacion: boolean
   barrioId: number
   sectorId: number
+  /** Usuario del sistema al que está asociado; `0` si no tiene ninguno. */
+  userId: number
 }
