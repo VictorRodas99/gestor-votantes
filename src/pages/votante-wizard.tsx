@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, type ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import StepDatosPersonales from '../components/wizard/step-datos-personales'
 import StepDatosVisita from '../components/wizard/step-datos-visita'
 import StepDatosVotacion from '../components/wizard/step-datos-votacion'
@@ -69,22 +70,20 @@ function VotanteWizard() {
 
   // post último paso
   const handleSubmit = form.handleSubmit(async (data) => {
-    console.log(data)
+    try {
+      await toast
+        .promise(crearVotante.mutateAsync(data), {
+          loading: 'Guardando votante…',
+          success: (response) => response.message,
+          error: (reason) =>
+            reason instanceof Error ? reason.message : 'Error al guardar'
+        })
+        .unwrap()
 
-    // try {
-    //   await toast
-    //     .promise(crearVotante.mutateAsync(data), {
-    //       loading: 'Guardando votante…',
-    //       success: (response) => response.message,
-    //       error: (reason) =>
-    //         reason instanceof Error ? reason.message : 'Error al guardar'
-    //     })
-    //     .unwrap()
-
-    //   navigate('/votantes')
-    // } catch {
-    //   // ...
-    // }
+      navigate('/votantes')
+    } catch {
+      // ...
+    }
   })
 
   const currentIndex = STEP_ORDER.indexOf(step.current)
