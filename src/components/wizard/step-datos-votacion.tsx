@@ -2,23 +2,31 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 import Button from '@mui/material/Button'
 import { useFormContext, type Path } from 'react-hook-form'
-import type { WizardFormData } from '../../forms/votante/wizard.schema'
+import { validarPaso } from '../../forms/votante/validar-paso'
+import {
+  pasoDosCompletoSchema,
+  type WizardFormData
+} from '../../forms/votante/wizard.schema'
 import type { WizardStepProps } from '../../types/wizard'
+import CodigoField from './codigo-field'
 import CompromisoToggles from './compromiso-toggles'
 import FormField from './form-field'
 import LocalVotacionSelect from './local-votacion-select'
 import SectionTitle from './section-title'
 
-// Campos que se validan antes de avanzar (validación por paso, arquitectura §4).
+// Campos que se validan antes de avanzar
 const PASO_DOS_FIELDS: Path<WizardFormData>[] = [
+  'codigo',
   'local_votacion_id',
   'boleta',
   'talon',
   'mesa',
   'orden',
+  'hora_votacion',
   'afiliacion',
   'voto_seguro',
   'voto_intendente',
+  'voto_intendente_anr',
   'voto_concejal',
   'movil'
 ]
@@ -36,7 +44,11 @@ export default function StepDatosVotacion({
   const form = useFormContext<WizardFormData>()
 
   const handleNext = async () => {
-    const valido = await form.trigger(PASO_DOS_FIELDS)
+    const valido = await validarPaso(
+      form,
+      pasoDosCompletoSchema,
+      PASO_DOS_FIELDS
+    )
     if (valido) onNext?.()
   }
 
@@ -45,6 +57,8 @@ export default function StepDatosVotacion({
       <div className="flex flex-col gap-5 lg:grid lg:grid-cols-12 lg:gap-8 lg:rounded-xl lg:border lg:border-divider lg:bg-surface-container-lowest lg:p-6">
         <div className="flex flex-col gap-5 lg:col-span-7">
           <SectionTitle>Detalles de Votación</SectionTitle>
+
+          <CodigoField />
 
           <LocalVotacionSelect disabled={readOnlyPadron} />
 
@@ -67,6 +81,12 @@ export default function StepDatosVotacion({
             <FormField name="mesa" label="Mesa" placeholder="N°" numeric />
             <FormField name="orden" label="Orden" placeholder="N°" numeric />
           </div>
+
+          <FormField
+            name="hora_votacion"
+            label="Hora de votación"
+            type="time"
+          />
         </div>
 
         <div className="flex flex-col gap-4 lg:col-span-5">
