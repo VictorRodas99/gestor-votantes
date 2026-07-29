@@ -16,6 +16,7 @@ export type VotanteRaw = {
   mapa: string
   celular: string
   familiar: string
+  nombre_familiar: string | null
   observacion: string
   fecha_nacimiento: string
   edad: string
@@ -36,6 +37,7 @@ export type VotanteRaw = {
   inc: string
   valor_inc: string
   encargado_visita: string | null
+  fecha_visita: string | null
   tipo_visita: string | null
   /** Vínculo votante↔referente (FK 1:N). `"0"` = sin asignar. */
   referente_id: string
@@ -83,9 +85,13 @@ export type Votante = {
   // Campos que hoy solo consume el detalle (no el listado).
   direccion: string
   encargadoVisita: string | null
+  /** `YYYY-MM-DD`; `null` si nunca se registró una visita. */
+  fechaVisita: string | null
   tipoVisita: string | null
   observacion: string
   familiar: boolean
+  /** `null` mientras `familiar` sea false o no se haya cargado. */
+  nombreFamiliar: string | null
   inc: boolean
   valorInc: number
   /** `0` = sin referente asignado. */
