@@ -13,6 +13,10 @@ export const REFERENTE_ROUTES = {
   index: 'referentes'
 } as const
 
+export const SESION_ROUTES = {
+  user: 'user'
+} as const
+
 export const PUNTERO_ROUTES = {
   index: 'punteros',
   post: 'punteros'
