@@ -24,19 +24,28 @@ function Sidebar() {
       >
         {sidebarNavItems.map((item) => {
           const isActive = item.key === activeKey
-          return (
+          const className = isActive
+            ? 'flex items-center gap-3 rounded-md bg-primary-container px-4 py-3 font-semibold text-primary-contrast'
+            : 'flex items-center gap-3 rounded-md px-4 py-3 font-medium text-text-secondary hover:bg-surface-container'
+          const contenido = (
+            <>
+              <item.Icon className="size-6" />
+              {item.label}
+            </>
+          )
+
+          return 'externo' in item && item.externo ? (
+            <a key={item.key} href={item.path} className={className}>
+              {contenido}
+            </a>
+          ) : (
             <Link
               key={item.key}
               to={item.path}
               aria-current={isActive ? 'page' : undefined}
-              className={
-                isActive
-                  ? 'flex items-center gap-3 rounded-md bg-primary-container px-4 py-3 font-semibold text-primary-contrast'
-                  : 'flex items-center gap-3 rounded-md px-4 py-3 font-medium text-text-secondary hover:bg-surface-container'
-              }
+              className={className}
             >
-              <item.Icon className="size-6" />
-              {item.label}
+              {contenido}
             </Link>
           )
         })}
