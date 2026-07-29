@@ -35,6 +35,8 @@ const pasoDosDefaults = {
 const pasoTresDefaults = {
   encargado_visita: '',
   tipo_visita: '',
+  nombre_familiar: '',
+  fecha_visita: '',
   observacion: '',
   familiar: false,
   inc: false,
