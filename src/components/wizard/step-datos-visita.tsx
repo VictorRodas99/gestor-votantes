@@ -1,12 +1,9 @@
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded'
-import FamilyRestroomRoundedIcon from '@mui/icons-material/FamilyRestroomRounded'
 import TipsAndUpdatesRoundedIcon from '@mui/icons-material/TipsAndUpdatesRounded'
 import Button from '@mui/material/Button'
-import Switch from '@mui/material/Switch'
-import { Controller, useFormContext } from 'react-hook-form'
-import type { WizardFormData } from '../../forms/votante/wizard.schema'
 import type { WizardStepProps } from '../../types/wizard'
+import FamiliarFields from './familiar-fields'
 import FormField from './form-field'
 import IncFields from './inc-fields'
 import SectionTitle from './section-title'
@@ -22,8 +19,6 @@ export default function StepDatosVisita({
   onSubmit,
   isSubmitting
 }: WizardStepProps) {
-  const { control } = useFormContext<WizardFormData>()
-
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-5 lg:grid lg:grid-cols-12 lg:gap-8 lg:rounded-xl lg:border lg:border-divider lg:bg-surface-container-lowest lg:p-6">
@@ -31,10 +26,17 @@ export default function StepDatosVisita({
           <SectionTitle>Detalles de la Visita</SectionTitle>
 
           <div className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:gap-3">
+            {/*
             <FormField
               name="encargado_visita"
               label="Encargado visita"
               placeholder="Nombre del encargado"
+            />
+            */}
+            <FormField
+              name="fecha_visita"
+              label="Fecha de visita"
+              type="date"
             />
             <FormField
               name="tipo_visita"
@@ -51,28 +53,7 @@ export default function StepDatosVisita({
             minRows={4}
           />
 
-          <div className="flex items-center gap-3 rounded-lg border border-divider bg-surface-container-lowest px-4 py-3">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-text-secondary">
-              <FamilyRestroomRoundedIcon fontSize="small" />
-            </span>
-
-            <span className="flex-1 text-body-lg font-medium text-text-primary">
-              ¿Es familiar?
-            </span>
-
-            <Controller
-              name="familiar"
-              control={control}
-              render={({ field }) => (
-                <Switch
-                  checked={Boolean(field.value)}
-                  onChange={(_, checked) => field.onChange(checked)}
-                  onBlur={field.onBlur}
-                />
-              )}
-            />
-          </div>
-
+          <FamiliarFields />
           <IncFields />
         </div>
 
