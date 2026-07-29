@@ -14,7 +14,8 @@ function mapReferente(raw: ReferenteRaw): Referente {
     celular: raw.celular?.trim() ?? '',
     afiliacion: raw.afiliacion === '1',
     barrioId: Number(raw.barrio_id),
-    sectorId: Number(raw.sector_id)
+    sectorId: Number(raw.sector_id),
+    userId: Number(raw.user_id ?? 0)
   }
 }
 
@@ -45,6 +46,31 @@ export const getReferentePorId = async (
 
     const raw = response.data[0]
     return raw ? mapReferente(raw) : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Referente asociado a un usuario del sistema (`elecciones_referentes.user_id`)
+ */
+export const getReferentePorUserId = async (
+  userId: number
+): Promise<Referente | null> => {
+  if (!userId || userId <= 0) return null
+
+  try {
+    const response = await api
+      .get(REFERENTE_ROUTES.index, {
+        searchParams: { user_id: userId, per_page: 1 }
+      })
+      .json<PaginatedResponse<ReferenteRaw>>()
+
+    const raw = response.data[0]
+    if (!raw) return null
+
+    const referente = mapReferente(raw)
+    return referente.userId === userId ? referente : null
   } catch {
     return null
   }
