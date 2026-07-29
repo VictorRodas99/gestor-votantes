@@ -47,8 +47,10 @@ export function votanteAValoresWizard(
 
     encargado_visita: votante.encargadoVisita ?? '',
     tipo_visita: votante.tipoVisita ?? '',
+    fecha_visita: votante.fechaVisita ?? '',
     observacion: votante.observacion,
     familiar: votante.familiar,
+    nombre_familiar: votante.nombreFamiliar ?? '',
     inc: votante.inc,
     valor_inc: votante.valorInc || undefined
   }
