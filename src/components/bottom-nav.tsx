@@ -1,7 +1,8 @@
 import BottomNavigation from '@mui/material/BottomNavigation'
 import BottomNavigationAction from '@mui/material/BottomNavigationAction'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { bottomNavItems, resolveActiveKey } from '../config/modules'
+import { navLinkProps } from '../lib/nav-link-props'
 
 /**
  * Navegación inferior fija (mobile/tablet). Deriva de `bottomNavItems` (Inicio +
@@ -25,8 +26,7 @@ function BottomNav() {
           key={item.key}
           value={item.key}
           label={item.label}
-          component={Link}
-          to={item.path}
+          {...navLinkProps(item)}
           icon={<item.Icon className="size-7" />}
         />
       ))}
