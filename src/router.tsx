@@ -2,7 +2,7 @@ import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import AppLayout from './components/app-layout'
 import RouteError from './components/route-error'
-import { modules } from './config/modules'
+import { esModuloInterno, modules } from './config/modules'
 import { ROUTER_BASENAME } from './constants/config'
 import HomePage from './pages/home'
 import NotFound from './pages/not-found'
@@ -18,7 +18,7 @@ export const router = createBrowserRouter(
       errorElement: <RouteError />,
       children: [
         { index: true, element: <HomePage /> },
-        ...modules.map((module) => ({
+        ...modules.filter(esModuloInterno).map((module) => ({
           path: module.path.slice(1),
           element: <module.Component />
         })),
