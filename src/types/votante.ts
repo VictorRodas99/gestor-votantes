@@ -31,6 +31,8 @@ export type VotanteRaw = {
   voto_seguro: string
   voto_concejal: string
   voto_intendente: string
+  voto_intendente_anr: string | null
+  voto_intendente_alianza: string | null
   inc: string
   valor_inc: string
   encargado_visita: string | null
@@ -38,11 +40,14 @@ export type VotanteRaw = {
   /** Vínculo votante↔referente (FK 1:N). `"0"` = sin asignar. */
   referente_id: string
   visitado: string
+  volver_visitar: string | null
 }
 
 /** Modelo de dominio: solo los campos que hoy usa el listado, ya casteados. */
 export type Votante = {
   id: number
+  /** Identificador alfanumérico (13 hex) que el backend genera con `uniqid()`. */
+  codigo: string
   cedula: string
   apellido: string
   nombre: string
@@ -55,9 +60,15 @@ export type Votante = {
   /** `movil` = necesita transporte para ir a votar el Día D. */
   requiereTransporte: boolean
   votoIntendente: boolean
+  /** Subcampos de `votoIntendente`: excluyentes entre sí. */
+  votoIntendenteAnr: boolean
+  votoIntendenteAlianza: boolean
   votoConcejal: boolean
   visitado: boolean
+  volverVisitar: boolean
   localVotacionId: number
+  /** `HH:MM` — la columna es `time` (`HH:MM:SS`); se recorta para el input. */
+  horaVotacion: string
   /** `null` cuando no está cargado en el padrón (opcionales en el alta). */
   boleta: number | null
   talon: number | null
