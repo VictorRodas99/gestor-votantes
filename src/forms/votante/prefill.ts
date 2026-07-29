@@ -1,4 +1,5 @@
 import type { DefaultValues } from 'react-hook-form'
+import { generarCodigoUnico } from '../../lib/codigo'
 import { parsearDireccion } from '../../lib/direccion'
 import type { Votante } from '../../types/votante'
 import type { WizardFormData } from './wizard.schema'
@@ -16,6 +17,7 @@ export function votanteAValoresWizard(
   votante: Votante
 ): DefaultValues<WizardFormData> {
   return {
+    codigo: votante.codigo || generarCodigoUnico(),
     cedula: votante.cedula,
     apellido: votante.apellido,
     nombre: votante.nombre,
@@ -31,13 +33,17 @@ export function votanteAValoresWizard(
     talon: votante.talon || undefined,
     mesa: votante.mesa || undefined,
     orden: votante.orden || undefined,
+    hora_votacion: votante.horaVotacion,
 
     afiliacion: votante.afiliado,
     voto_seguro: votante.votoSeguro,
     voto_intendente: votante.votoIntendente,
+    voto_intendente_anr: votante.votoIntendenteAnr,
+    voto_intendente_alianza: votante.votoIntendenteAlianza,
     voto_concejal: votante.votoConcejal,
     movil: votante.requiereTransporte,
     visitado: votante.visitado,
+    volver_visitar: votante.volverVisitar,
 
     encargado_visita: votante.encargadoVisita ?? '',
     tipo_visita: votante.tipoVisita ?? '',
