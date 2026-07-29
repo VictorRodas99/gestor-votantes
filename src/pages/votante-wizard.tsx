@@ -13,6 +13,7 @@ import {
   type WizardFormData
 } from '../forms/votante/wizard.schema'
 import { useCrearVotante } from '../hooks/services/votantes'
+import { useReferentePorDefecto } from '../hooks/use-referente-por-defecto'
 import type { WizardStepProps } from '../types/wizard'
 
 const STEP = Object.freeze({
@@ -53,6 +54,8 @@ function VotanteWizard() {
     mode: 'onChange',
     defaultValues: valoresIniciales
   })
+
+  useReferentePorDefecto(form, origen)
 
   const crearVotante = useCrearVotante()
 
