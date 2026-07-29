@@ -1,3 +1,5 @@
+import { generarCodigoUnico } from '../../lib/codigo'
+
 const pasoUnoDefaults = {
   cedula: '',
   apellido: '',
@@ -18,12 +20,16 @@ const pasoDosDefaults = {
   talon: undefined,
   mesa: undefined,
   orden: undefined,
+  hora_votacion: '',
   afiliacion: false,
   voto_seguro: false,
   voto_intendente: false,
+  voto_intendente_anr: false,
+  voto_intendente_alianza: false,
   voto_concejal: false,
   movil: false,
-  visitado: false
+  visitado: false,
+  volver_visitar: false
 } as const
 
 const pasoTresDefaults = {
@@ -35,8 +41,15 @@ const pasoTresDefaults = {
   valor_inc: undefined
 } as const
 
-export default {
-  ...pasoUnoDefaults,
-  ...pasoDosDefaults,
-  ...pasoTresDefaults
+/**
+ * Es una **factory** y no un objeto literal
+ * porque cada alta necesita un `codigo` nuevo
+ */
+export default function crearValoresPorDefecto() {
+  return {
+    ...pasoUnoDefaults,
+    ...pasoDosDefaults,
+    ...pasoTresDefaults,
+    codigo: generarCodigoUnico()
+  }
 }
