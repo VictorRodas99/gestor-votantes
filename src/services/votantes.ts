@@ -9,8 +9,11 @@ import api from '../lib/http'
 import type { PaginatedResponse } from '../types/api'
 import type { Votante, VotanteRaw } from '../types/votante'
 
-/** Convierte `"1"` / `"0"` (y afines) al booleano de dominio. */
-function toBoolean(value: string): boolean {
+/**
+ * Convierte `"1"` / `"0"` (y afines) al booleano de dominio. Las columnas
+ * nuevas son NULLables y llegan como `null` → `false`.
+ */
+function toBoolean(value: string | null): boolean {
   return value === '1'
 }
 
@@ -31,6 +34,7 @@ function mapVotante(raw: VotanteRaw): Votante {
 
   return {
     id: Number(raw.id),
+    codigo: raw.codigo,
     cedula: raw.cedula,
     apellido,
     nombre,
@@ -40,9 +44,14 @@ function mapVotante(raw: VotanteRaw): Votante {
     votoSeguro: toBoolean(raw.voto_seguro),
     requiereTransporte: toBoolean(raw.movil),
     votoIntendente: toBoolean(raw.voto_intendente),
+    votoIntendenteAnr: toBoolean(raw.voto_intendente_anr),
+    votoIntendenteAlianza: toBoolean(raw.voto_intendente_alianza),
     votoConcejal: toBoolean(raw.voto_concejal),
     visitado: toBoolean(raw.visitado),
+    volverVisitar: toBoolean(raw.volver_visitar),
     localVotacionId: Number(raw.local_votacion_id),
+    // La columna es `time` (`18:09:40`); el <input type="time"> quiere `HH:MM`.
+    horaVotacion: raw.hora_votacion.slice(0, 5),
     boleta: toNumeroOpcional(raw.boleta),
     talon: toNumeroOpcional(raw.talon),
     mesa: Number(raw.mesa),
@@ -153,6 +162,7 @@ export const getVotanteByCedula = async (
 }
 
 export type VotantePayload = {
+  codigo: string
   cedula: string
   apellido: string
   nombre: string
@@ -169,12 +179,17 @@ export type VotantePayload = {
   talon: number | null
   mesa: number | null
   orden: number | null
+  /** `HH:MM:SS` — la columna es `time`. */
+  hora_votacion: string
   afiliacion: boolean
   voto_seguro: boolean
   voto_intendente: boolean
+  voto_intendente_anr: boolean
+  voto_intendente_alianza: boolean
   voto_concejal: boolean
   movil: boolean
   visitado: boolean
+  volver_visitar: boolean
   encargado_visita: string | null
   tipo_visita: string | null
   observacion: string
@@ -186,6 +201,7 @@ export type VotantePayload = {
 
 export function toVotantePayload(data: WizardFormData): VotantePayload {
   return {
+    codigo: data.codigo,
     cedula: data.cedula,
     apellido: data.apellido,
     nombre: data.nombre,
@@ -206,12 +222,21 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     talon: data.talon ?? null,
     mesa: data.mesa ?? null,
     orden: data.orden ?? null,
+    hora_votacion: `${data.hora_votacion}:00`,
     afiliacion: data.afiliacion,
     voto_seguro: data.voto_seguro,
     voto_intendente: data.voto_intendente,
+    // Sin voto a intendente, los subcampos no significan nada.
+    voto_intendente_anr: data.voto_intendente
+      ? data.voto_intendente_anr
+      : false,
+    voto_intendente_alianza: data.voto_intendente
+      ? data.voto_intendente_alianza
+      : false,
     voto_concejal: data.voto_concejal,
     movil: data.movil,
     visitado: data.visitado,
+    volver_visitar: data.volver_visitar,
     encargado_visita: data.encargado_visita || null,
     tipo_visita: data.tipo_visita || null,
     observacion: data.observacion ?? '',
