@@ -2,12 +2,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, type ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 import StepDatosPersonales from '../components/wizard/step-datos-personales'
 import StepDatosVisita from '../components/wizard/step-datos-visita'
 import StepDatosVotacion from '../components/wizard/step-datos-votacion'
 import WizardProgress from '../components/wizard/wizard-progress'
-import votanteWizardFormDefaults from '../forms/votante/default-values'
+import crearValoresPorDefecto from '../forms/votante/default-values'
 import {
   wizardSchema,
   type WizardFormData
@@ -46,11 +45,12 @@ function VotanteWizard() {
 
   // Modo padrón/alta: dueño del orquestador para compartir el readonly del padrón
   const [origen, setOrigen] = useState<'nuevo' | 'padron'>('nuevo')
+  const [valoresIniciales] = useState(crearValoresPorDefecto)
 
   const form = useForm<WizardFormData>({
     resolver: zodResolver(wizardSchema),
     mode: 'onChange',
-    defaultValues: votanteWizardFormDefaults
+    defaultValues: valoresIniciales
   })
 
   const crearVotante = useCrearVotante()
@@ -69,20 +69,22 @@ function VotanteWizard() {
 
   // post último paso
   const handleSubmit = form.handleSubmit(async (data) => {
-    try {
-      await toast
-        .promise(crearVotante.mutateAsync(data), {
-          loading: 'Guardando votante…',
-          success: (response) => response.message,
-          error: (reason) =>
-            reason instanceof Error ? reason.message : 'Error al guardar'
-        })
-        .unwrap()
+    console.log(data)
 
-      navigate('/votantes')
-    } catch {
-      // ...
-    }
+    // try {
+    //   await toast
+    //     .promise(crearVotante.mutateAsync(data), {
+    //       loading: 'Guardando votante…',
+    //       success: (response) => response.message,
+    //       error: (reason) =>
+    //         reason instanceof Error ? reason.message : 'Error al guardar'
+    //     })
+    //     .unwrap()
+
+    //   navigate('/votantes')
+    // } catch {
+    //   // ...
+    // }
   })
 
   const currentIndex = STEP_ORDER.indexOf(step.current)
