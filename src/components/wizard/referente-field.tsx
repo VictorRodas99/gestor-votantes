@@ -38,15 +38,15 @@ export default function ReferenteField() {
   const nuevoReferente = useWatch({ control, name: 'nuevo_referente' })
   const barrioId = useWatch({ control, name: 'barrio_id' })
 
-  const { data: referentePrecargado } = useReferentePorId(
-    referenteId != null && barrioId == null ? referenteId : undefined
-  )
+  const { data: referenteSeleccionado } = useReferentePorId(referenteId)
 
   useEffect(() => {
-    if (referentePrecargado?.barrioId) {
-      setValue('barrio_id', referentePrecargado.barrioId)
+    // Ya hay barrio elegido: no pisarlo.
+    if (barrioId != null) return
+    if (referenteSeleccionado?.barrioId) {
+      setValue('barrio_id', referenteSeleccionado.barrioId)
     }
-  }, [referentePrecargado, setValue])
+  }, [referenteSeleccionado, barrioId, setValue])
 
   const { errors } = useFormState({ control, name: 'referente_id' })
   const referenteError = errors.referente_id?.message
@@ -60,6 +60,13 @@ export default function ReferenteField() {
   const [debounced] = useDebounce(busqueda, 400)
   const { data: referentes, isFetching } = useReferentesSearch(debounced)
   const { data: sectores } = useSectores()
+
+  // El seleccionado puede no estar entre los resultados de la búsqueda
+  const opciones =
+    referenteSeleccionado &&
+    !referentes?.some((r) => r.id === referenteSeleccionado.id)
+      ? [referenteSeleccionado, ...(referentes ?? [])]
+      : (referentes ?? [])
 
   const limpiar = () => {
     setValue('referente_id', undefined)
@@ -149,12 +156,12 @@ export default function ReferenteField() {
           name="referente_id"
           control={control}
           render={({ field, fieldState: { error } }) => {
-            const selected =
-              referentes?.find((r) => r.id === field.value) ?? null
+            const selected = opciones.find((r) => r.id === field.value) ?? null
+
             return (
               <FieldShell label="Buscar referente" error={error?.message}>
                 <Autocomplete
-                  options={referentes ?? []}
+                  options={opciones}
                   loading={isFetching}
                   value={selected}
                   getOptionLabel={(option) => option.nombreApellido}
