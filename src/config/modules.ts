@@ -1,21 +1,35 @@
 import type { SvgIconComponent } from '@mui/icons-material'
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded'
-import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded'
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded'
 import type { ComponentType, LazyExoticComponent } from 'react'
 import { lazy } from 'react'
 
-export type AppModule = {
+type ModuloBase = {
   key: string
   label: string
   path: string
   Icon: SvgIconComponent
   /** Si el módulo aparece como acceso directo en la navegación inferior. */
   inBottomNav: boolean
-  /** Página del módulo, cargada de forma diferida (code-splitting por ruta). */
+}
+
+export type ModuloInterno = ModuloBase & {
+  externo?: false
   Component: LazyExoticComponent<ComponentType>
+}
+
+// si redirige a sysventas
+export type ModuloExterno = ModuloBase & {
+  externo: true
+}
+
+export type AppModule = ModuloInterno | ModuloExterno
+
+export function esModuloInterno(module: AppModule): module is ModuloInterno {
+  return !module.externo
 }
 
 export const modules: AppModule[] = [
@@ -36,21 +50,29 @@ export const modules: AppModule[] = [
     Component: lazy(() => import('../pages/asignacion'))
   },
   {
+    key: 'users',
+    label: 'Usuarios',
+    path: '/seguridad/user',
+    Icon: ManageAccountsRoundedIcon,
+    inBottomNav: false,
+    externo: true
+  },
+  {
     key: 'reportes',
     label: 'Reportes',
     path: '/reportes',
     Icon: InsertChartRoundedIcon,
     inBottomNav: true,
     Component: lazy(() => import('../pages/reportes'))
-  },
-  {
-    key: 'catalogos',
-    label: 'Catálogos',
-    path: '/catalogos',
-    Icon: CategoryRoundedIcon,
-    inBottomNav: false,
-    Component: lazy(() => import('../pages/catalogos'))
   }
+  // {
+  //   key: 'catalogos',
+  //   label: 'Catálogos',
+  //   path: '/catalogos',
+  //   Icon: CategoryRoundedIcon,
+  //   inBottomNav: false,
+  //   Component: lazy(() => import('../pages/catalogos'))
+  // }
 ]
 
 export const homeNavItem = {
