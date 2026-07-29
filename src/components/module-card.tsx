@@ -1,8 +1,8 @@
 import Card from '@mui/material/Card'
 import CardActionArea from '@mui/material/CardActionArea'
 import Typography from '@mui/material/Typography'
-import { Link } from 'react-router-dom'
 import type { AppModule } from '../config/modules'
+import { navLinkProps } from '../lib/nav-link-props'
 
 type ModuleCardProps = {
   module: AppModule
@@ -16,8 +16,7 @@ function ModuleCard({ module }: ModuleCardProps) {
   return (
     <Card>
       <CardActionArea
-        component={Link}
-        to={module.path}
+        {...navLinkProps(module)}
         className="flex flex-col items-center gap-3 px-4 py-6"
       >
         <span className="flex size-16 items-center justify-center rounded-full bg-surface-container text-primary">
