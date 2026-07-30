@@ -27,6 +27,14 @@ function toNumeroOpcional(value: string | null): number | null {
   return Number.isNaN(numero) ? null : numero
 }
 
+/** `0000-00-00` es el "sin cargar" que deja el POST (pendientes-server §14.2). */
+function toFechaOpcional(value: string | null): string | null {
+  if (value === null || value.trim() === '' || value === '0000-00-00') {
+    return null
+  }
+  return value
+}
+
 /** Castea un registro crudo (todo string) al modelo de dominio ya tipado. */
 function mapVotante(raw: VotanteRaw): Votante {
   const nombre = raw.nombre.trim()
@@ -61,7 +69,7 @@ function mapVotante(raw: VotanteRaw): Votante {
     nacionalidad: raw.nacionalidad,
     direccion: raw.direccion.trim(),
     encargadoVisita: raw.encargado_visita,
-    fechaVisita: raw.fecha_visita,
+    fechaVisita: toFechaOpcional(raw.fecha_visita),
     tipoVisita: raw.tipo_visita,
     observacion: raw.observacion.trim(),
     familiar: toBoolean(raw.familiar),
