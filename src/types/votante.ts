@@ -48,7 +48,11 @@ export type VotanteRaw = {
 /** Modelo de dominio: solo los campos que hoy usa el listado, ya casteados. */
 export type Votante = {
   id: number
-  /** Identificador alfanumérico (13 hex) que el backend genera con `uniqid()`. */
+  /**
+   * Código **tal cual está persistido**: 8 dígitos en el formato vigente, un
+   * `uniqid()` viejo, o `''` si nunca se guardó. El código que le corresponde
+   * al votante se deriva de su cédula con `codigoDesdeCedula` (`lib/codigo.ts`).
+   */
   codigo: string
   cedula: string
   apellido: string
