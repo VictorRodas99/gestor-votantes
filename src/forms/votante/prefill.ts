@@ -1,5 +1,4 @@
 import type { DefaultValues } from 'react-hook-form'
-import { generarCodigoUnico } from '../../lib/codigo'
 import { parsearDireccion } from '../../lib/direccion'
 import type { Votante } from '../../types/votante'
 import type { WizardFormData } from './wizard.schema'
@@ -17,7 +16,6 @@ export function votanteAValoresWizard(
   votante: Votante
 ): DefaultValues<WizardFormData> {
   return {
-    codigo: votante.codigo || generarCodigoUnico(),
     cedula: votante.cedula,
     apellido: votante.apellido,
     nombre: votante.nombre,
