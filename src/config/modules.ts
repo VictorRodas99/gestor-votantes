@@ -60,10 +60,10 @@ export const modules: AppModule[] = [
   {
     key: 'reportes',
     label: 'Reportes',
-    path: '/reportes',
+    path: '/reportes/rep/mis_reportes',
     Icon: InsertChartRoundedIcon,
     inBottomNav: true,
-    Component: lazy(() => import('../pages/reportes'))
+    externo: true
   }
   // {
   //   key: 'catalogos',
