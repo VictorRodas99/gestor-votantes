@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 export const pasoDosSchema = z.object({
-  // Mismo formato que el `uniqid()` del backend (lib/codigo.ts).
-  codigo: z.string().regex(/^[0-9a-f]{13}$/, 'Código inválido'),
+  // `codigo` no está acá a propósito: se deriva de la cédula (lib/codigo.ts),
+  // así que no es un dato que el usuario cargue ni que haya que validar.
   local_votacion_id: z
     .number({ error: 'Seleccione un local de votación' })
     .int()
