@@ -5,16 +5,22 @@ import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import { useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import type { WizardFormData } from '../../forms/votante/wizard.schema'
+import { codigoDesdeCedula, formatearCodigo } from '../../lib/codigo'
 import { FieldShell } from './form-field'
 
 export default function CodigoField() {
   const { control } = useFormContext<WizardFormData>()
+  const cedula = useWatch({ control, name: 'cedula' })
   const [copiado, setCopiado] = useState(false)
 
-  const copiar = async (codigo: string) => {
+  // Derivado de la cédula, no un campo del form: mientras no haya cédula no hay
+  // código que mostrar (lib/codigo.ts).
+  const codigo = formatearCodigo(codigoDesdeCedula(cedula ?? ''))
+
+  const copiar = async () => {
     try {
       await navigator.clipboard.writeText(codigo)
       setCopiado(true)
@@ -26,50 +32,39 @@ export default function CodigoField() {
   }
 
   return (
-    <Controller
-      name="codigo"
-      control={control}
-      render={({ field, fieldState: { error } }) => (
-        <FieldShell
-          label="Código Único"
-          htmlFor="codigo"
-          error={error?.message}
-        >
-          <TextField
-            {...field}
-            id="codigo"
-            value={field.value ?? ''}
-            error={Boolean(error)}
-            fullWidth
-            slotProps={{
-              htmlInput: {
-                readOnly: true,
-                className: 'font-mono tracking-wider'
-              },
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip title={copiado ? 'Copiado' : 'Copiar código'}>
-                      <IconButton
-                        edge="end"
-                        size="small"
-                        aria-label="Copiar código único"
-                        onClick={() => copiar(String(field.value ?? ''))}
-                      >
-                        {copiado ? (
-                          <CheckRoundedIcon fontSize="small" />
-                        ) : (
-                          <ContentCopyRoundedIcon fontSize="small" />
-                        )}
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                )
-              }
-            }}
-          />
-        </FieldShell>
-      )}
-    />
+    <FieldShell label="Código Único" htmlFor="codigo">
+      <TextField
+        id="codigo"
+        value={codigo}
+        placeholder="Se genera con la cédula"
+        fullWidth
+        slotProps={{
+          htmlInput: {
+            readOnly: true,
+            className: 'font-mono tracking-wider'
+          },
+          input: {
+            endAdornment: codigo ? (
+              <InputAdornment position="end">
+                <Tooltip title={copiado ? 'Copiado' : 'Copiar código'}>
+                  <IconButton
+                    edge="end"
+                    size="small"
+                    aria-label="Copiar código único"
+                    onClick={copiar}
+                  >
+                    {copiado ? (
+                      <CheckRoundedIcon fontSize="small" />
+                    ) : (
+                      <ContentCopyRoundedIcon fontSize="small" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              </InputAdornment>
+            ) : null
+          }
+        }}
+      />
+    </FieldShell>
   )
 }
