@@ -22,10 +22,15 @@ function Ilustracion({ titulo, hint }: { titulo: string; hint?: string }) {
   return (
     <div className="flex flex-col items-center gap-3 py-10 text-center">
       <span className="flex size-20 items-center justify-center rounded-full bg-surface-container-low">
-        <PersonSearchRoundedIcon className="text-text-secondary" fontSize="large" />
+        <PersonSearchRoundedIcon
+          className="text-text-secondary"
+          fontSize="large"
+        />
       </span>
       <p className="text-body-md text-text-secondary">{titulo}</p>
-      {hint ? <p className="text-label-md text-text-secondary">{hint}</p> : null}
+      {hint ? (
+        <p className="text-label-md text-text-secondary">{hint}</p>
+      ) : null}
     </div>
   )
 }
