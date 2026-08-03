@@ -16,7 +16,6 @@ import SectionTitle from './section-title'
 
 // Campos que se validan antes de avanzar
 const PASO_DOS_FIELDS: Path<WizardFormData>[] = [
-  'codigo',
   'local_votacion_id',
   'boleta',
   'talon',
