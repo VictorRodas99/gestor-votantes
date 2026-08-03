@@ -1,6 +1,8 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useState } from 'react'
@@ -110,7 +112,21 @@ function VotantesPage() {
         {isLg ? (
           <aside className="sticky top-6 w-96 shrink-0 self-start border-l border-divider pl-6">
             {selectedCedula ? (
-              <VotanteDetallePanel cedula={selectedCedula} />
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-title-md flex-1 font-semibold text-primary">
+                    Detalle del votante
+                  </h2>
+                  <IconButton
+                    aria-label="Cerrar detalle"
+                    onClick={closeDetalle}
+                    className="text-primary"
+                  >
+                    <CloseRoundedIcon />
+                  </IconButton>
+                </div>
+                <VotanteDetallePanel cedula={selectedCedula} />
+              </div>
             ) : (
               <EmptyState
                 title="Seleccioná un votante"
