@@ -3,6 +3,7 @@ import { VOTANTES_PER_PAGE } from '../constants/config'
 import { VOTANTE_ROUTES } from '../constants/routes'
 import type { ReferenteFormData } from '../forms/votante/referente.schema'
 import type { WizardFormData } from '../forms/votante/wizard.schema'
+import { codigoDesdeCedula } from '../lib/codigo'
 import { calcularEdad } from '../lib/date'
 import { appendCampo } from '../lib/form-data'
 import api from '../lib/http'
@@ -42,6 +43,9 @@ function mapVotante(raw: VotanteRaw): Votante {
 
   return {
     id: Number(raw.id),
+    // Tal cual está en la base, sin derivarlo: el detalle tiene que reflejar lo
+    // que el server guardó, incluso si es un `uniqid()` del formato viejo o si
+    // la columna está vacía (26.629 de 26.633 filas lo están).
     codigo: raw.codigo,
     cedula: raw.cedula,
     apellido,
@@ -213,7 +217,7 @@ export type VotantePayload = {
 
 export function toVotantePayload(data: WizardFormData): VotantePayload {
   return {
-    codigo: data.codigo,
+    codigo: codigoDesdeCedula(data.cedula),
     cedula: data.cedula,
     apellido: data.apellido,
     nombre: data.nombre,
