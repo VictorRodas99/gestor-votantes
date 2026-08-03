@@ -23,9 +23,7 @@ function VotanteRecientes({ recientes, onSelect }: VotanteRecientesProps) {
           iniciales={getInitials(reciente.nombreCompleto)}
           titulo={reciente.nombreCompleto}
           subtitulo={`CI: ${formatCedula(reciente.cedula)}`}
-          trailing={
-            <ChevronRightRoundedIcon className="text-text-secondary" />
-          }
+          trailing={<ChevronRightRoundedIcon className="text-text-secondary" />}
           onClick={() => onSelect(reciente)}
           ariaLabel={`Seleccionar a ${reciente.nombreCompleto}`}
         />
