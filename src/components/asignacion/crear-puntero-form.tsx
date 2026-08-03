@@ -180,9 +180,7 @@ function CrearPunteroForm({ isPending, onSubmit }: CrearPunteroFormProps) {
         fullWidth
         disabled={isPending}
         startIcon={
-          isPending ? (
-            <CircularProgress size={18} color="inherit" />
-          ) : undefined
+          isPending ? <CircularProgress size={18} color="inherit" /> : undefined
         }
       >
         Crear y asignar
