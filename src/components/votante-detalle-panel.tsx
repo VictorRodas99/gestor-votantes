@@ -3,7 +3,9 @@ import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { useState, type ReactNode } from 'react'
 import { useLocalesVotacion } from '../hooks/services/catalogos'
+import { useReferentePorId } from '../hooks/services/referentes'
 import { useVotante } from '../hooks/services/votantes'
+import { formatearCodigo } from '../lib/codigo'
 import { parsearDireccion } from '../lib/direccion'
 import { formatCedula, getInitials } from '../lib/format'
 import EmptyState from './empty-state'
@@ -25,6 +27,8 @@ function fallback(value: string | number | null | undefined): string {
   if (typeof value === 'number' && Number.isNaN(value)) return 'Sin datos'
   return String(value)
 }
+
+const siNo = (value: boolean): string => (value ? 'Sí' : 'No')
 
 /** Campo de solo lectura: etiqueta en negrita + valor en caja (estilo del wizard). */
 function DetailField({
@@ -64,6 +68,11 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
     refetch
   } = useVotante(cedula)
   const { data: locales } = useLocalesVotacion()
+  // Antes de los early returns: `useReferentePorId` queda deshabilitado
+  // mientras no haya votante o su `referente_id` sea `0`.
+  const { data: referente } = useReferentePorId(
+    votante?.referenteId || undefined
+  )
   const [tab, setTab] = useState(0)
 
   if (isLoading) return <LoadingState label="Cargando votante…" />
@@ -128,16 +137,22 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
             label="Sexo"
             value={SEXO_LABEL[votante.sexo] ?? votante.sexo}
           />
+          <DetailField label="Nacionalidad" value={votante.nacionalidad} />
           <DetailField label="Celular" value={votante.celular} />
           <DetailField
             label="Dirección"
             value={parsearDireccion(votante.direccion).calle}
           />
+          <DetailField label="Referente" value={referente?.nombreApellido} />
         </TabPanel>
       )}
 
       {tab === 1 && (
         <TabPanel>
+          <DetailField
+            label="Código Único"
+            value={formatearCodigo(votante.codigo)}
+          />
           <DetailField label="Local de votación" value={local?.denominacion} />
           <div className="grid grid-cols-2 gap-3">
             <DetailField label="Boleta" value={votante.boleta} />
@@ -147,31 +162,70 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
             <DetailField label="Mesa" value={votante.mesa} />
             <DetailField label="Orden" value={votante.orden} />
           </div>
+          <DetailField label="Hora de votación" value={votante.horaVotacion} />
+          <div className="grid grid-cols-2 gap-3">
+            <DetailField label="Voto seguro" value={siNo(votante.votoSeguro)} />
+            <DetailField label="Afiliado" value={siNo(votante.afiliado)} />
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <DetailField
-              label="Voto seguro"
-              value={votante.votoSeguro ? 'Sí' : 'No'}
+              label="Voto intendente"
+              value={siNo(votante.votoIntendente)}
             />
             <DetailField
-              label="Afiliado"
-              value={votante.afiliado ? 'Sí' : 'No'}
+              label="Voto concejal"
+              value={siNo(votante.votoConcejal)}
             />
           </div>
+          {/* ANR y Alianza solo significan algo si vota a intendente. */}
+          {votante.votoIntendente && (
+            <div className="grid grid-cols-2 gap-3">
+              <DetailField
+                label="ANR"
+                value={siNo(votante.votoIntendenteAnr)}
+              />
+              <DetailField
+                label="Alianza"
+                value={siNo(votante.votoIntendenteAlianza)}
+              />
+            </div>
+          )}
           <DetailField
             label="Requiere transporte"
-            value={votante.requiereTransporte ? 'Sí' : 'No'}
+            value={siNo(votante.requiereTransporte)}
           />
+          <div className="grid grid-cols-2 gap-3">
+            <DetailField label="Visitado" value={siNo(votante.visitado)} />
+            <DetailField
+              label="Volver a visitar"
+              value={siNo(votante.volverVisitar)}
+            />
+          </div>
         </TabPanel>
       )}
 
       {tab === 2 && (
         <TabPanel>
+          {/*
           <DetailField
             label="Encargado de visita"
             value={votante.encargadoVisita}
           />
+          */}
+          <DetailField label="Fecha de visita" value={votante.fechaVisita} />
           <DetailField label="Tipo de visita" value={votante.tipoVisita} />
           <DetailField label="Observación" value={votante.observacion} />
+          <DetailField label="¿Es familiar?" value={siNo(votante.familiar)} />
+          {votante.familiar && (
+            <DetailField
+              label="Nombre de Familiar"
+              value={votante.nombreFamiliar}
+            />
+          )}
+          <DetailField label="Inc." value={siNo(votante.inc)} />
+          {votante.inc && (
+            <DetailField label="Monto de inc." value={votante.valorInc} />
+          )}
         </TabPanel>
       )}
     </div>
