@@ -1,5 +1,3 @@
-import { generarCodigoUnico } from '../../lib/codigo'
-
 const pasoUnoDefaults = {
   cedula: '',
   apellido: '',
@@ -44,14 +42,14 @@ const pasoTresDefaults = {
 } as const
 
 /**
- * Es una **factory** y no un objeto literal
- * porque cada alta necesita un `codigo` nuevo
+ * Es una **factory** y no un objeto literal para que cada `reset` parta de un
+ * objeto propio y no comparta el `direccion` anidado entre altas.
  */
 export default function crearValoresPorDefecto() {
   return {
     ...pasoUnoDefaults,
     ...pasoDosDefaults,
     ...pasoTresDefaults,
-    codigo: generarCodigoUnico()
+    direccion: { ...pasoUnoDefaults.direccion }
   }
 }
