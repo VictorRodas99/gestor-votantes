@@ -1,5 +1,4 @@
 import type { SvgIconComponent } from '@mui/icons-material'
-import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded'
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded'
@@ -41,20 +40,20 @@ export const modules: AppModule[] = [
     inBottomNav: true,
     Component: lazy(() => import('../pages/votantes'))
   },
-  {
-    key: 'asignacion',
-    label: 'Asignación',
-    path: '/asignacion',
-    Icon: AssignmentRoundedIcon,
-    inBottomNav: true,
-    Component: lazy(() => import('../pages/asignacion'))
-  },
+  // {
+  //   key: 'asignacion',
+  //   label: 'Asignación',
+  //   path: '/asignacion',
+  //   Icon: AssignmentRoundedIcon,
+  //   inBottomNav: true,
+  //   Component: lazy(() => import('../pages/asignacion'))
+  // },
   {
     key: 'users',
     label: 'Usuarios',
     path: '/seguridad/user',
     Icon: ManageAccountsRoundedIcon,
-    inBottomNav: false,
+    inBottomNav: true,
     externo: true
   },
   {
