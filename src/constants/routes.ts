@@ -17,6 +17,10 @@ export const SESION_ROUTES = {
   user: 'user'
 } as const
 
+export const RESUMEN_ROUTES = {
+  info: 'info'
+} as const
+
 export const PUNTERO_ROUTES = {
   index: 'punteros',
   post: 'punteros'
