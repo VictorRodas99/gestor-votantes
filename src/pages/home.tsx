@@ -6,8 +6,11 @@ import ModuleCard from '../components/module-card'
 import StatCard from '../components/stat-card'
 import { homeStats } from '../config/home-stats'
 import { modules } from '../config/modules'
+import { useResumenCampana } from '../hooks/services/resumen'
 
 function HomePage() {
+  const { data: resumen, isPending } = useResumenCampana()
+
   return (
     <div className="flex flex-col gap-6">
       <div className="hidden items-start justify-between lg:flex">
@@ -31,7 +34,12 @@ function HomePage() {
 
       <div className="hidden gap-4 lg:grid lg:grid-cols-4">
         {homeStats.map((stat) => (
-          <StatCard key={stat.key} stat={stat} />
+          <StatCard
+            key={stat.key}
+            stat={stat}
+            value={resumen?.[stat.key]}
+            isLoading={isPending}
+          />
         ))}
       </div>
 
