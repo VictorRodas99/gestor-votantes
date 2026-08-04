@@ -3,44 +3,20 @@ import CloudUploadOutlined from '@mui/icons-material/CloudUploadOutlined'
 import DirectionsWalkRounded from '@mui/icons-material/DirectionsWalkRounded'
 import HowToRegRounded from '@mui/icons-material/HowToRegRounded'
 import HowToVoteOutlined from '@mui/icons-material/HowToVoteOutlined'
+import type { ResumenCampana } from '../types/resumen'
 
 export type HomeStat = {
-  key: string
+  /** Campo del resumen (`/info`) del que sale el valor. */
+  key: keyof ResumenCampana
   label: string
-  /** Placeholder (0) hasta wire del reporte real (ver notes/api/pendientes-server.md). */
-  value: number
   Icon: SvgIconComponent
-  /** Tendencia opcional; placeholder '—' hasta tener datos reales. */
-  trend?: string
+  // `/info` no devuelve serie temporal, no hay con qué calcular la tendencia.
+  // trend?: string
 }
 
 export const homeStats: HomeStat[] = [
-  {
-    key: 'cargados',
-    label: 'Cargados',
-    value: 0,
-    Icon: CloudUploadOutlined,
-    trend: '—'
-  },
-  {
-    key: 'votoSeguro',
-    label: 'Voto Seguro',
-    value: 0,
-    Icon: HowToVoteOutlined,
-    trend: '—'
-  },
-  {
-    key: 'visitados',
-    label: 'Visitados',
-    value: 0,
-    Icon: DirectionsWalkRounded,
-    trend: '—'
-  },
-  {
-    key: 'afiliados',
-    label: 'Afiliados',
-    value: 0,
-    Icon: HowToRegRounded,
-    trend: '—'
-  }
+  { key: 'cargados', label: 'Cargados', Icon: CloudUploadOutlined },
+  { key: 'votoSeguro', label: 'Voto Seguro', Icon: HowToVoteOutlined },
+  { key: 'visitados', label: 'Visitados', Icon: DirectionsWalkRounded },
+  { key: 'afiliados', label: 'Afiliados', Icon: HowToRegRounded }
 ]
