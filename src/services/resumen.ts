@@ -5,7 +5,7 @@ import type { ResumenCampana, ResumenCampanaRaw } from '../types/resumen'
 
 const aNumero = (valor: number | string | undefined): number => {
   const parsed = Number(valor)
-  return Number.isNaN(parsed) || Number.isFinite(parsed) ? 0 : parsed
+  return !Number.isNaN(parsed) ? parsed : 0
 }
 
 function mapResumen(raw: ResumenCampanaRaw): ResumenCampana {
