@@ -20,6 +20,10 @@ export function useReferentePorDefecto(
     debeAplicar.current = referente_id == null && nuevo_referente == null
   }, [origen, form])
 
+  // `origen` también acá: con la query ya cacheada, `referente` no cambia de identidad
+  // durante el prefill del padrón y este efecto no volvería a correr, dejando la decisión
+  // tomada pero sin ejecutar. React corre los efectos en orden de declaración, así que
+  // `debeAplicar` ya está actualizado cuando se lee.
   useEffect(() => {
     if (!debeAplicar.current || !referente) return
 
@@ -34,5 +38,5 @@ export function useReferentePorDefecto(
     // espejo de barrio
     if (referente.barrioId) form.setValue('barrio_id', referente.barrioId)
     debeAplicar.current = false
-  }, [referente, form])
+  }, [origen, referente, form])
 }
