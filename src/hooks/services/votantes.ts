@@ -61,15 +61,22 @@ export const useVotante = (cedula: string | null) => {
   })
 }
 
+/**
+ * `enabled` existe para que la página pueda suscribirse a la misma query que la
+ * lista (y así saber qué filas están renderizadas) sin disparar la del
+ * breakpoint que no está montado. Misma key ⇒ un solo fetch.
+ */
 export const useVotantesPaged = (
   filters: VotantesFilters = {},
-  page: number
+  page: number,
+  { enabled = true }: { enabled?: boolean } = {}
 ) => {
   return useQuery({
     queryKey: [BASE_VOTANTE_QUERY, 'paged', filters, page],
     queryFn: () => getVotantes({ ...filters, page }),
     placeholderData: keepPreviousData,
-    staleTime: VOTANTES_STALE_TIME
+    staleTime: VOTANTES_STALE_TIME,
+    enabled
   })
 }
 
@@ -83,8 +90,12 @@ export const useCrearVotante = () => {
   })
 }
 
-export const useVotantesInfinite = (filters: VotantesFilters = {}) => {
+export const useVotantesInfinite = (
+  filters: VotantesFilters = {},
+  { enabled = true }: { enabled?: boolean } = {}
+) => {
   return useInfiniteQuery({
+    enabled,
     queryKey: [BASE_VOTANTE_QUERY, 'infinite', filters],
     queryFn: ({ pageParam }) => getVotantes({ ...filters, page: pageParam }),
     initialPageParam: 1,
