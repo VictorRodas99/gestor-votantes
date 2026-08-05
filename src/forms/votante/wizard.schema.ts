@@ -5,32 +5,21 @@ import { pasoUnoSchema } from './paso-uno.schema'
 import { referenteSchema } from './referente.schema'
 
 /**
- * Viven en una función aparte porque hacen falta en dos lugares: el schema
+ * Vive en una función aparte porque hace falta en dos lugares: el schema
  * completo (submit final) y el schema del paso (validación al avanzar)
  */
-function reglasReferente(
+function reglaBarrioDelNuevoReferente(
   data: {
     barrio_id?: number
-    referente_id?: number
     nuevo_referente?: unknown
   },
   ctx: z.RefinementCtx
 ) {
-  // Al crear un referente nuevo, el barrio compartido es obligatorio.
   if (data.nuevo_referente && !data.barrio_id) {
     ctx.addIssue({
       code: 'custom',
       message: 'Seleccione un barrio para el referente',
       path: ['barrio_id']
-    })
-  }
-
-  if (!data.referente_id && !data.nuevo_referente) {
-    ctx.addIssue({
-      code: 'custom',
-      message:
-        'Debe asignar un referente: elija uno existente o cree uno nuevo',
-      path: ['referente_id']
     })
   }
 }
@@ -66,7 +55,7 @@ function reglasInc(
 // vacíos) corten la ejecución del refinamiento.
 export const pasoUnoCompletoSchema = pasoUnoSchema
   .extend({ nuevo_referente: referenteSchema.optional() })
-  .superRefine(reglasReferente)
+  .superRefine(reglaBarrioDelNuevoReferente)
 
 export const pasoDosCompletoSchema = pasoDosSchema.superRefine(reglasIntendente)
 
@@ -77,7 +66,7 @@ export const wizardSchema = pasoUnoSchema
     nuevo_referente: referenteSchema.optional()
   })
   .superRefine((data, ctx) => {
-    reglasReferente(data, ctx)
+    reglaBarrioDelNuevoReferente(data, ctx)
     reglasIntendente(data, ctx)
     reglasInc(data, ctx)
   })
