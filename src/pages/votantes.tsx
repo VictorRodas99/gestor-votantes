@@ -1,30 +1,30 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { toast } from 'sonner'
 import { useDebounce } from 'use-debounce'
 import EmptyState from '../components/empty-state'
 import SearchBar from '../components/search-bar'
 import VotanteDetalleDialog from '../components/votante-detalle-dialog'
 import VotanteDetallePanel from '../components/votante-detalle-panel'
+import VotantesExportMenu from '../components/votantes-export-menu'
 import VotantesFilterBar, {
   type VotantesFilterValue
 } from '../components/votantes-filter-bar'
 import VotantesListDesktop from '../components/votantes-list-desktop'
 import VotantesListMobile from '../components/votantes-list-mobile'
 import { ESTADO_OPTIONS } from '../constants/votante'
+import {
+  useVotantesInfinite,
+  useVotantesPaged
+} from '../hooks/services/votantes'
 import { buildSearchFilters } from '../lib/votante-search'
 import type { VotantesFilters } from '../services/votantes'
 import type { Votante } from '../types/votante'
-
-const handleExport = () =>
-  toast('La exportación de votantes está en construcción.')
 
 function VotantesPage() {
   const theme = useTheme()
@@ -48,6 +48,27 @@ function VotantesPage() {
     visitado: filters.visitado ?? true,
     ...estado?.filters
   }
+
+  const [page, setPage] = useState(1)
+  const [appliedFilters, setAppliedFilters] = useState(queryFilters)
+
+  if (queryFilters !== appliedFilters) {
+    setAppliedFilters(queryFilters)
+    setPage(1)
+  }
+
+  // Misma query key que las listas: React Query la comparte, así que esto no
+  // agrega fetches — solo expone acá qué filas están renderizadas para exportar.
+  const paged = useVotantesPaged(queryFilters, page, { enabled: isDesktop })
+  const infinite = useVotantesInfinite(queryFilters, { enabled: !isDesktop })
+
+  const visibles = isDesktop
+    ? (paged.data?.votantes ?? [])
+    : (infinite.data?.pages.flatMap((grupo) => grupo.votantes) ?? [])
+
+  const total = isDesktop
+    ? (paged.data?.total ?? 0)
+    : (infinite.data?.pages[0]?.total ?? 0)
 
   // Abrir empuja una entrada al historial → el botón "atrás" cierra el modal.
   const openDetalle = (votante: Votante) =>
@@ -88,14 +109,12 @@ function VotantesPage() {
 
           <div className="flex items-start gap-3">
             <VotantesFilterBar value={filters} onChange={setFilters} />
-            <Button
-              variant="outlined"
-              startIcon={<FileDownloadOutlinedIcon />}
-              onClick={handleExport}
-              className="ml-auto hidden shrink-0 rounded-full px-4 lg:inline-flex"
-            >
-              Exportar
-            </Button>
+            <VotantesExportMenu
+              filters={queryFilters}
+              visibles={visibles}
+              total={total}
+              compacto={!isDesktop}
+            />
           </div>
 
           {isDesktop ? (
@@ -103,6 +122,8 @@ function VotantesPage() {
               filters={queryFilters}
               selectedCedula={selectedCedula}
               onSelect={openDetalle}
+              page={page}
+              onPageChange={setPage}
             />
           ) : (
             <VotantesListMobile filters={queryFilters} onSelect={openDetalle} />
