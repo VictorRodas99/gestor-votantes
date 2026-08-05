@@ -29,3 +29,5 @@ api
 
 bun.lock
 .env
+
+doctor.config.json
