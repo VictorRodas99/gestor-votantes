@@ -5,7 +5,6 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import { useState } from 'react'
 import { VOTANTES_PER_PAGE } from '../constants/config'
 import { useVotantesPaged } from '../hooks/services/votantes'
 import { formatCedula } from '../lib/format'
@@ -21,21 +20,18 @@ type VotantesListDesktopProps = {
   /** Cédula del votante abierto en el panel/modal (fila resaltada). */
   selectedCedula: string | null
   onSelect: (votante: Votante) => void
+  /** La página vive arriba: la exportación necesita saber qué filas se ven. */
+  page: number
+  onPageChange: (page: number) => void
 }
 
 function VotantesListDesktop({
   filters,
   selectedCedula,
-  onSelect
+  onSelect,
+  page,
+  onPageChange
 }: VotantesListDesktopProps) {
-  const [page, setPage] = useState(1)
-  const [appliedFilters, setAppliedFilters] = useState(filters)
-
-  if (filters !== appliedFilters) {
-    setAppliedFilters(filters)
-    setPage(1)
-  }
-
   const { data, isLoading, isError, error, refetch, isPlaceholderData } =
     useVotantesPaged(filters, page)
 
@@ -115,7 +111,7 @@ function VotantesListDesktop({
         <Pagination
           count={pageCount}
           page={page}
-          onChange={(_, value) => setPage(value)}
+          onChange={(_, value) => onPageChange(value)}
           color="primary"
           className="self-center"
         />
