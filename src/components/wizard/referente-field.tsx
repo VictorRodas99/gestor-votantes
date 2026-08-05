@@ -69,22 +69,14 @@ export default function ReferenteField() {
       : (referentes ?? [])
 
   const limpiar = () => {
-    setValue('referente_id', undefined)
+    setValue('referente_id', undefined, { shouldTouch: true })
     setValue('nuevo_referente', undefined)
   }
 
   const cambiarModo = (nuevoModo: Modo) => {
     setModo(nuevoModo)
     limpiar()
-    if (nuevoModo === 'crear') {
-      setValue('nuevo_referente', {
-        nombre_apellido: '',
-        cedula: '',
-        celular: '',
-        afiliacion: false,
-        sector_id: undefined
-      })
-    }
+    setAbiertoManual(true)
   }
 
   const seleccionarExistente = (referente: Referente | null) => {
@@ -114,7 +106,7 @@ export default function ReferenteField() {
               referenteError ? 'text-error' : 'text-text-secondary'
             }`}
           >
-            {referenteError ?? 'Requerido'}
+            {referenteError ?? 'Opcional'}
           </span>
         </span>
       </button>
