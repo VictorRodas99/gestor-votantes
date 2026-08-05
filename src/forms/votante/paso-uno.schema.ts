@@ -46,7 +46,7 @@ export const pasoUnoSchema = z.object({
     lng: z.number({ error: 'Capture la ubicación por GPS o en el mapa' })
   }),
   barrio_id: z.number().int().positive().optional(),
-  // Referente existente elegido (0/undefined = sin referente).
+  // puede quedar sin referente (`undefined` acá → `0` en el POST).
   referente_id: z.number().int().positive().optional()
 })
 
