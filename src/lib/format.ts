@@ -6,7 +6,14 @@ const THOUSANDS_OPTIONS = {
 } as const
 
 /**
- * Formatea una cédula con puntos de miles: `2497375` → `"2.497.375"`.
+ * Formatea un entero con puntos de miles: `3480` → `"3.480"`.
+ */
+export function formatNumero(numero: number): string {
+  return format(numero, THOUSANDS_OPTIONS)
+}
+
+/**
+ * devuelve el valor tal cual si no es numérico (`2497375` → `"2.497.375"`).
  */
 export function formatCedula(cedula: string): string {
   const numeric = Number(cedula)
@@ -15,7 +22,7 @@ export function formatCedula(cedula: string): string {
     return cedula
   }
 
-  return format(numeric, THOUSANDS_OPTIONS)
+  return formatNumero(numeric)
 }
 
 /**
