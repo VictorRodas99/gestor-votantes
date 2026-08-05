@@ -27,9 +27,16 @@ export function useReferentePorDefecto(
   useEffect(() => {
     if (!debeAplicar.current || !referente) return
 
-    // re-chequeo por si el usuario eligió algo mientras la query cargaba: no pisar.
+    // re-chequeo por si el usuario tocó el campo mientras la query cargaba: no pisar.
+    // `isTouched` cubre el caso que los valores no distinguen: quitar el referente a
+    // mano deja el form igual de vacío que si nunca se hubiera tocado, y el referente
+    // vacío es un estado final válido (el campo es opcional).
     const { referente_id, nuevo_referente } = form.getValues()
-    if (referente_id != null || nuevo_referente != null) {
+    if (
+      referente_id != null ||
+      nuevo_referente != null ||
+      form.getFieldState('referente_id').isTouched
+    ) {
       debeAplicar.current = false
       return
     }
