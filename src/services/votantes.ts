@@ -3,6 +3,7 @@ import { VOTANTES_PER_PAGE } from '../constants/config'
 import { VOTANTE_ROUTES } from '../constants/routes'
 import type { ReferenteFormData } from '../forms/votante/referente.schema'
 import type { WizardFormData } from '../forms/votante/wizard.schema'
+import { esCancelacion } from '../lib/abort'
 import { codigoDesdeCedula } from '../lib/codigo'
 import { calcularEdad } from '../lib/date'
 import { appendCampo } from '../lib/form-data'
@@ -112,7 +113,8 @@ export type VotantesResult = {
 }
 
 export const getVotantes = async (
-  filters: VotantesFilters = {}
+  filters: VotantesFilters = {},
+  { signal }: { signal?: AbortSignal } = {}
 ): Promise<VotantesResult> => {
   const {
     cedula,
@@ -143,7 +145,7 @@ export const getVotantes = async (
 
   try {
     const response = await api
-      .get(VOTANTE_ROUTES.index, { searchParams })
+      .get(VOTANTE_ROUTES.index, { searchParams, signal })
       .json<PaginatedResponse<VotanteRaw>>()
 
     return {
@@ -152,6 +154,8 @@ export const getVotantes = async (
       page: Number(response.page) || page
     }
   } catch (reason) {
+    if (esCancelacion(reason)) throw reason
+
     // Esta API responde 200 + texto plano ante errores → `.json()` lanza un
     // SyntaxError, no un HTTPError. Unificamos todo en un Error legible.
     if (reason instanceof HTTPError) {
@@ -162,6 +166,66 @@ export const getVotantes = async (
       cause: reason
     })
   }
+}
+
+/**
+ * La API no tiene tope de `per_page`
+ */
+const EXPORT_PER_PAGE = 500
+/**
+ * HTTP/1.1 abre como mucho 6 conexiones por origen — con 5 queda una libre para
+ * el resto de la app y no se encolan requests.
+ */
+const EXPORT_BATCH_SIZE = 5
+/** Corte duro por si `total_items` viniera absurdo */
+const EXPORT_MAX_FILAS = 30_000
+
+export type ExportOptions = {
+  onProgress?: (cargados: number, total: number) => void
+  signal?: AbortSignal
+}
+
+export const getVotantesTodos = async (
+  filters: VotantesFilters = {},
+  { onProgress, signal }: ExportOptions = {}
+): Promise<Votante[]> => {
+  const pedirPagina = (page: number) =>
+    getVotantes({ ...filters, page, perPage: EXPORT_PER_PAGE }, { signal })
+
+  const primera = await pedirPagina(1)
+  const total = Math.min(primera.total, EXPORT_MAX_FILAS)
+  const votantes = [...primera.votantes]
+  onProgress?.(votantes.length, total)
+
+  const ultimaPagina = Math.ceil(total / EXPORT_PER_PAGE)
+  let page = 2
+
+  while (page <= ultimaPagina) {
+    signal?.throwIfAborted()
+
+    const paginas = Array.from(
+      { length: Math.min(EXPORT_BATCH_SIZE, ultimaPagina - page + 1) },
+      (_, indice) => page + indice
+    )
+
+    const lote = await Promise.all(
+      paginas.map((numero) =>
+        pedirPagina(numero).then((resultado) => {
+          onProgress?.(votantes.length + resultado.votantes.length, total)
+          return resultado
+        })
+      )
+    )
+
+    for (const resultado of lote) votantes.push(...resultado.votantes)
+    onProgress?.(votantes.length, total)
+
+    // Defensa por si el server devuelve páginas vacías antes del total.
+    if (lote.every((resultado) => resultado.votantes.length === 0)) break
+    page += paginas.length
+  }
+
+  return votantes.slice(0, EXPORT_MAX_FILAS)
 }
 
 /**
