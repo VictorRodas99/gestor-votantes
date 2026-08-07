@@ -24,6 +24,7 @@ export function votanteAValoresWizard(
     nacionalidad: votante.nacionalidad,
     celular: votante.celular || '',
     direccion: parsearDireccion(votante.direccion || ''),
+    barrio_id: votante.barrioId || undefined,
     referente_id: votante.referenteId || undefined,
 
     local_votacion_id: votante.localVotacionId || undefined,
