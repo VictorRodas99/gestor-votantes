@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { MENSAJE_CELULAR_TOMADO } from '../components/wizard/celular-field'
 import StepDatosPersonales from '../components/wizard/step-datos-personales'
 import StepDatosVisita from '../components/wizard/step-datos-visita'
 import StepDatosVotacion from '../components/wizard/step-datos-votacion'
@@ -12,7 +13,10 @@ import {
   wizardSchema,
   type WizardFormData
 } from '../forms/votante/wizard.schema'
-import { useCrearVotante } from '../hooks/services/votantes'
+import {
+  useAsegurarCelularLibre,
+  useCrearVotante
+} from '../hooks/services/votantes'
 import { useReferentePorDefecto } from '../hooks/use-referente-por-defecto'
 import type { WizardStepProps } from '../types/wizard'
 
@@ -58,6 +62,7 @@ function VotanteWizard() {
   useReferentePorDefecto(form, origen)
 
   const crearVotante = useCrearVotante()
+  const asegurarCelularLibre = useAsegurarCelularLibre()
 
   const handleNextStep = () => {
     const from = step.current
@@ -73,6 +78,19 @@ function VotanteWizard() {
 
   // post último paso
   const handleSubmit = form.handleSubmit(async (data) => {
+    // Barato (sale de la caché) y cubre el caso de volver al Paso 1, cambiar el
+    // celular y saltar adelante sin pasar por su gate.
+    const libre = await asegurarCelularLibre(data.celular ?? '', data.cedula)
+    if (!libre) {
+      form.setError('celular', {
+        type: 'celular-tomado',
+        message: MENSAJE_CELULAR_TOMADO
+      })
+      toast.error(MENSAJE_CELULAR_TOMADO)
+      setStep({ previous: STEP.datos, current: STEP.datos })
+      return
+    }
+
     try {
       await toast
         .promise(crearVotante.mutateAsync(data), {
