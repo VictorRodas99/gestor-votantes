@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 import { lazy, Suspense, useState } from 'react'
-import { Controller, useFormContext, useFormState } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useDebounce } from 'use-debounce'
 import { BUSQUEDA_DEBOUNCE_MS } from '../../constants/geocoding'
@@ -40,8 +40,6 @@ export default function UbicacionField() {
     aplicarSugerencia,
     capturarUbicacion
   } = useUbicacionVotante()
-  const { errors } = useFormState({ control, name: 'direccion.lat' })
-  const coordenadasError = errors.direccion?.lat?.message
   const [mapOpen, setMapOpen] = useState(false)
 
   const [texto, setTexto] = useState('')
@@ -142,19 +140,12 @@ export default function UbicacionField() {
                 />
               )}
             />
-            {tieneCoordenadas ? (
+            {tieneCoordenadas && (
               <span className="flex items-center gap-1 text-label-sm text-text-secondary">
                 <PlaceRoundedIcon fontSize="inherit" />
                 {lat!.toFixed(5)}, {lng!.toFixed(5)}
                 {reverseIsPending && ' · buscando dirección…'}
               </span>
-            ) : (
-              coordenadasError && (
-                <span className="flex items-center gap-1 text-label-sm text-error">
-                  <PlaceRoundedIcon fontSize="inherit" />
-                  {coordenadasError}
-                </span>
-              )
             )}
           </FieldShell>
         )}
