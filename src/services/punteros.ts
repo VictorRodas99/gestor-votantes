@@ -1,9 +1,11 @@
 import { HTTPError } from 'ky'
 import { PUNTERO_ROUTES } from '../constants/routes'
 import type { PunteroFormData } from '../forms/puntero/puntero.schema'
+import { mensajeDeRespuestaSucia, parsearJsonSucio } from '../lib/api-json'
 import { toFormData } from '../lib/form-data'
 import { toTitleCase } from '../lib/format'
 import api from '../lib/http'
+import { normalizarCelular } from '../lib/telefono'
 import type { PaginatedResponse } from '../types/api'
 import type { Puntero, PunteroRaw } from '../types/puntero'
 
@@ -84,7 +86,7 @@ function toPunteroPayload(data: PunteroFormData): Record<string, unknown> {
   return {
     cedula: data.cedula,
     nombre_apellido: data.nombre_apellido,
-    celular: data.celular,
+    celular: normalizarCelular(data.celular),
     afiliacion: data.afiliacion,
     barrio_id: data.barrio_id ?? 0,
     sector_id: data.sector_id ?? 0,
@@ -115,13 +117,16 @@ export const crearPuntero = async (
     })
   }
 
-  let parsed: { success?: boolean; message?: string; pkey?: number | string }
-  try {
-    parsed = JSON.parse(raw)
-  } catch (reason) {
+  const parsed = parsearJsonSucio<{
+    success?: boolean
+    message?: string
+    pkey?: number | string
+  }>(raw)
+
+  if (!parsed) {
     throw new Error(
-      raw.trim() || 'No pudimos guardar el puntero. Intentá de nuevo.',
-      { cause: reason }
+      mensajeDeRespuestaSucia(raw) ||
+        'No pudimos guardar el puntero. Intentá de nuevo.'
     )
   }
 
