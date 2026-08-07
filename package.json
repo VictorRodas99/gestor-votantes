@@ -10,6 +10,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint . --fix",
     "types": "tsc --noEmit",
+    "metadata:telefono": "libphonenumber-metadata-generator src/lib/metadata-py.json --countries PY --extended",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "fuse.js": "^7.5.0",
     "ky": "^2.0.2",
     "leaflet": "^1.9.4",
+    "libphonenumber-js": "^1.13.10",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.81.0",
@@ -52,6 +54,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "libphonenumber-metadata-generator": "^2.0.6",
     "prettier": "^3.9.5",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "^0.8.1",
