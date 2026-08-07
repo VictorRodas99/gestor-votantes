@@ -279,7 +279,7 @@ export type VotantePayload = {
   sexo: string
   nacionalidad: string
   celular: string
-  direccion: { calle: string; lat: number | null; lng: number | null }
+  direccion: { calle: string; lat: number | ''; lng: number | '' }
   barrio_id: number
   referente_id: number
   local_votacion_id: number
@@ -323,8 +323,8 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     celular: data.celular ? normalizarCelular(data.celular) : '',
     direccion: {
       calle: data.direccion?.calle ?? '',
-      lat: data.direccion?.lat ?? null,
-      lng: data.direccion?.lng ?? null
+      lat: data.direccion?.lat ?? '',
+      lng: data.direccion?.lng ?? ''
     },
     barrio_id: data.barrio_id ?? 0,
     referente_id: data.referente_id ?? 0,
