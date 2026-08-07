@@ -1,6 +1,8 @@
 export type DireccionParseada = { calle: string; lat?: number; lng?: number }
 
 function aCoordenada(valor: unknown) {
+  if (valor == null || valor === '') return undefined
+
   const numero = Number(valor)
   return Number.isNaN(numero) ? undefined : numero
 }
