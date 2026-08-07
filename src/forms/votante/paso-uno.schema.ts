@@ -32,13 +32,10 @@ export const pasoUnoSchema = z.object({
   nacionalidad: z.string().optional(),
 
   celular: celularOpcionalSchema.optional(),
-  // Ubicación como objeto: calle → columna `direccion`; lat/lng → columna `mapa`.
   direccion: z.object({
-    calle: z.string().trim().min(1, 'La dirección es obligatoria').max(255),
-    // lat: z.number().optional(),
-    // lng: z.number().optional()
-    lat: z.number({ error: 'Capture la ubicación por GPS o en el mapa' }),
-    lng: z.number({ error: 'Capture la ubicación por GPS o en el mapa' })
+    calle: z.string().trim().max(255).optional(),
+    lat: z.number().optional(),
+    lng: z.number().optional()
   }),
   barrio_id: z.number().int().positive().optional(),
   // puede quedar sin referente (`undefined` acá → `0` en el POST).
