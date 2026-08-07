@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { calcularEdad, esFechaValida } from '../../lib/date'
+import { celularOpcionalSchema } from '../celular.schema'
 
 const CEDULA_REGEX = /^\d+$/
-const CELULAR_REGEX = /^09\d{8}$/
 const EDAD_MINIMA = 18
 
 export const pasoUnoSchema = z.object({
@@ -31,12 +31,7 @@ export const pasoUnoSchema = z.object({
    */
   nacionalidad: z.string().optional(),
 
-  celular: z
-    .string()
-    .trim()
-    .regex(CELULAR_REGEX, 'Formato: 09XXXXXXXX')
-    .optional()
-    .or(z.literal('')),
+  celular: celularOpcionalSchema.optional(),
   // Ubicación como objeto: calle → columna `direccion`; lat/lng → columna `mapa`.
   direccion: z.object({
     calle: z.string().trim().min(1, 'La dirección es obligatoria').max(255),
