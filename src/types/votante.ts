@@ -13,6 +13,8 @@ export type VotanteRaw = {
   nombre: string
   afiliacion: string
   direccion: string
+  /** Anclaje de zona del votante. `null` en todo el padrón: solo lo puebla el wizard. */
+  barrio_id: string | null
   mapa: string
   celular: string
   familiar: string
@@ -88,6 +90,8 @@ export type Votante = {
   nacionalidad: string
   // Campos que hoy solo consume el detalle (no el listado).
   direccion: string
+  /** `0` = sin barrio asignado. */
+  barrioId: number
   encargadoVisita: string | null
   /** `YYYY-MM-DD`; `null` si nunca se registró una visita. */
   fechaVisita: string | null
