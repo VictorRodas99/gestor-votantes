@@ -214,7 +214,7 @@ export default function ReferenteField() {
                   <TextField
                     {...field}
                     value={field.value ?? ''}
-                    placeholder="09XXXXXXXX"
+                    placeholder="Ej: 0991123456"
                     error={Boolean(error)}
                     fullWidth
                     slotProps={{ htmlInput: { inputMode: 'numeric' } }}
