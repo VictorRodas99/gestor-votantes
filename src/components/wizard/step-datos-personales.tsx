@@ -1,7 +1,7 @@
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 import Button from '@mui/material/Button'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { useFormContext, useWatch, type Path } from 'react-hook-form'
 import crearValoresPorDefecto from '../../forms/votante/default-values'
 import { votanteAValoresWizard } from '../../forms/votante/prefill'
@@ -10,10 +10,12 @@ import {
   pasoUnoCompletoSchema,
   type WizardFormData
 } from '../../forms/votante/wizard.schema'
+import { useAsegurarCelularLibre } from '../../hooks/services/votantes'
 import type { Votante } from '../../types/votante'
 import type { WizardStepProps } from '../../types/wizard'
 import BarrioSelect from './barrio-select'
 import CedulaSearch from './cedula-search'
+import CelularField, { MENSAJE_CELULAR_TOMADO } from './celular-field'
 import FormField from './form-field'
 import ReferenteField from './referente-field'
 import SectionTitle from './section-title'
@@ -58,6 +60,9 @@ export default function StepDatosPersonales({
   const referenteId = useWatch({ control: form.control, name: 'referente_id' })
   const esDesktop = useMediaQuery('(min-width:1024px)')
 
+  const asegurarCelularLibre = useAsegurarCelularLibre()
+  const [verificandoCelular, setVerificandoCelular] = useState(false)
+
   const readOnlyIdentidad = origen === 'padron'
 
   const prefillDesdePadron = (votante: Votante) => {
@@ -74,7 +79,27 @@ export default function StepDatosPersonales({
       pasoUnoCompletoSchema,
       PASO_UNO_FIELDS
     )
-    if (valido) onNext?.()
+    if (!valido) return
+
+    // Aparte del schema porque es asíncrona y porque `validarPaso` arranca con
+    // un `trigger` que borraría cualquier error puesto a mano.
+    setVerificandoCelular(true)
+    const libre = await asegurarCelularLibre(
+      form.getValues('celular') ?? '',
+      form.getValues('cedula')
+    )
+    setVerificandoCelular(false)
+
+    if (!libre) {
+      form.setError('celular', {
+        type: 'celular-tomado',
+        message: MENSAJE_CELULAR_TOMADO
+      })
+      form.setFocus('celular')
+      return
+    }
+
+    onNext?.()
   }
 
   return (
@@ -114,12 +139,7 @@ export default function StepDatosPersonales({
 
           <SexoToggle disabled={readOnlyIdentidad} />
 
-          <FormField
-            name="celular"
-            label="Celular"
-            placeholder="Ej: 0991123456"
-            type="tel"
-          />
+          <CelularField />
 
           <SectionTitle>Ubicación y Referencias</SectionTitle>
 
@@ -158,6 +178,7 @@ export default function StepDatosPersonales({
           size="large"
           fullWidth
           onClick={handleNext}
+          loading={verificandoCelular}
           endIcon={<ArrowForwardRoundedIcon />}
           className="lg:w-auto lg:min-w-40 lg:flex-none"
         >
