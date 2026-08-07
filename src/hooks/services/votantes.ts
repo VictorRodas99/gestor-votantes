@@ -1,21 +1,26 @@
 import {
   keepPreviousData,
+  queryOptions,
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient
 } from '@tanstack/react-query'
+import { esCelularValido, normalizarCelular } from '../../lib/telefono'
 import { buildSearchFilters } from '../../lib/votante-search'
 import {
   crearVotante,
   getVotanteByCedula,
   getVotantes,
+  getVotantesPorCelular,
   type VotantesFilters
 } from '../../services/votantes'
 
 export const BASE_VOTANTE_QUERY = 'votantes'
 const VOTANTES_STALE_TIME = 1000 * 30 // 30 secs
 const VOTANTES_BUSQUEDA_PER_PAGE = 15
+/** Sobrevive a salir del wizard y volver a entrar. */
+const CELULAR_GC_TIME = 1000 * 60 * 30
 
 /**
  * Búsqueda de votante para la asignación. Sin filtro de visitado.
@@ -46,6 +51,70 @@ export const useVotantePorCedula = (cedula: string) => {
     enabled: CEDULA_BUSCABLE.test(cedula),
     staleTime: VOTANTES_STALE_TIME
   })
+}
+
+/**
+ * Opciones compartidas por la verificación en vivo (`useCelularTomado`) y por
+ * el gate del botón (`fetchQuery`): misma key ⇒ **una sola** entrada de caché,
+ * que es lo que evita repetir la consulta del mismo número en la sesión.
+ *
+ * `staleTime: Infinity` es seguro porque la única escritura de celulares que
+ * hace la app es el POST del wizard, y `useCrearVotante` ya invalida
+ * `[BASE_VOTANTE_QUERY]` entero al terminar.
+ */
+export const opcionesCelular = (celular: string) =>
+  queryOptions({
+    // Sin la cédula a propósito: la respuesta del server es la misma para
+    // todos; excluir al propio votante es una lectura sobre el resultado.
+    queryKey: [BASE_VOTANTE_QUERY, 'por-celular', normalizarCelular(celular)],
+    queryFn: ({ signal }) => getVotantesPorCelular(celular, { signal }),
+    staleTime: Infinity,
+    gcTime: CELULAR_GC_TIME,
+    // Fallar rápido: ante error no se bloquea el alta (fail-open).
+    retry: false
+  })
+
+/**
+ * ¿El celular ya está cargado en **otro** votante? Un match con la misma cédula
+ * es el propio votante prellenado desde el padrón, y no es conflicto.
+ */
+export const useCelularTomado = (celular: string, cedulaPropia: string) => {
+  const habilitado = esCelularValido(celular)
+
+  const { data, isFetching, isError } = useQuery({
+    ...opcionesCelular(celular),
+    enabled: habilitado
+  })
+
+  return {
+    verificando: habilitado && isFetching,
+    tomado: Boolean(data?.some((votante) => votante.cedula !== cedulaPropia)),
+    verificado: habilitado && !isFetching && data != null,
+    falloVerificacion: isError
+  }
+}
+
+/**
+ * Chequeo puntual para bloquear el avance: sale de la caché si el número ya se
+ * verificó y, si no, espera la consulta (cubre "pulsó Siguiente antes de que
+ * corriera el debounce").
+ */
+export const useAsegurarCelularLibre = () => {
+  const queryClient = useQueryClient()
+
+  return async (celular: string, cedulaPropia: string): Promise<boolean> => {
+    // `fetchQuery` no respeta `enabled`, así que el guard va acá.
+    if (!esCelularValido(celular)) return true
+
+    try {
+      const votantes = await queryClient.fetchQuery(opcionesCelular(celular))
+      return !votantes.some((votante) => votante.cedula !== cedulaPropia)
+    } catch {
+      // No bloquear un alta por una falla de red: el duplicado se corrige
+      // después, el votante en la puerta de la casa se pierde.
+      return true
+    }
+  }
 }
 
 /**
