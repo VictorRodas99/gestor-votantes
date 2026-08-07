@@ -4,10 +4,12 @@ import { VOTANTE_ROUTES } from '../constants/routes'
 import type { ReferenteFormData } from '../forms/votante/referente.schema'
 import type { WizardFormData } from '../forms/votante/wizard.schema'
 import { esCancelacion } from '../lib/abort'
+import { mensajeDeRespuestaSucia, parsearJsonSucio } from '../lib/api-json'
 import { codigoDesdeCedula } from '../lib/codigo'
 import { calcularEdad } from '../lib/date'
 import { appendCampo } from '../lib/form-data'
 import api from '../lib/http'
+import { normalizarCelular } from '../lib/telefono'
 import type { PaginatedResponse } from '../types/api'
 import type { Votante, VotanteRaw } from '../types/votante'
 
@@ -73,6 +75,7 @@ function mapVotante(raw: VotanteRaw): Votante {
     sexo: raw.sexo,
     nacionalidad: raw.nacionalidad,
     direccion: raw.direccion.trim(),
+    barrioId: Number(raw.barrio_id) || 0,
     encargadoVisita: raw.encargado_visita,
     fechaVisita: toFechaOpcional(raw.fecha_visita),
     tipoVisita: raw.tipo_visita,
@@ -92,9 +95,11 @@ function mapVotante(raw: VotanteRaw): Votante {
  * 22-jul): `cedula` (exacta), `apellido`/`nombre` (LIKE), `localVotacionId`
  * (FK exacta) y los exactos `votoSeguro` / `afiliacion` / `movil` / `visitado`
  * (el proveedor los habilitó el 17/22-jul; ver `pendientes-server.md` §1-§2).
+ * `celular` se sumó a la lista el 06-ago (§16): match exacto sobre la columna.
  */
 export type VotantesFilters = {
   cedula?: string
+  celular?: string
   apellido?: string
   nombre?: string
   localVotacionId?: number
@@ -118,6 +123,7 @@ export const getVotantes = async (
 ): Promise<VotantesResult> => {
   const {
     cedula,
+    celular,
     apellido,
     nombre,
     localVotacionId,
@@ -134,6 +140,7 @@ export const getVotantes = async (
     per_page: perPage
   }
   if (cedula) searchParams.cedula = cedula
+  if (celular) searchParams.celular = celular
   if (apellido) searchParams.apellido = apellido
   if (nombre) searchParams.nombre = nombre
   if (localVotacionId != null) searchParams.local_votacion_id = localVotacionId
@@ -239,6 +246,29 @@ export const getVotanteByCedula = async (
   return votantes[0] ?? null
 }
 
+/**
+ * Con el filtro server-side andando, un celular devuelve una fila (o ninguna).
+ * Se piden 5 para poder saltear el propio registro y ver si además lo tiene
+ * algún otro votante.
+ */
+const CELULAR_MATCH_PER_PAGE = 5
+
+export const getVotantesPorCelular = async (
+  celular: string,
+  { signal }: { signal?: AbortSignal } = {}
+): Promise<Votante[]> => {
+  const buscado = normalizarCelular(celular)
+  const { votantes } = await getVotantes(
+    { celular: buscado, perPage: CELULAR_MATCH_PER_PAGE },
+    { signal }
+  )
+
+  return votantes.filter(
+    (votante) =>
+      votante.celular !== '' && normalizarCelular(votante.celular) === buscado
+  )
+}
+
 export type VotantePayload = {
   codigo: string
   cedula: string
@@ -289,7 +319,8 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     edad: calcularEdad(data.fecha_nacimiento),
     sexo: data.sexo,
     nacionalidad: data.nacionalidad ?? '',
-    celular: data.celular ?? '',
+    // Se guarda siempre en formato nacional (`0991123456`)
+    celular: data.celular ? normalizarCelular(data.celular) : '',
     direccion: {
       calle: data.direccion?.calle ?? '',
       lat: data.direccion?.lat ?? null,
@@ -327,7 +358,11 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     inc: data.inc,
     valor_inc: data.inc ? (data.valor_inc ?? 0) : 0,
     nuevo_referente: data.nuevo_referente
-      ? { ...data.nuevo_referente, barrio_id: data.barrio_id ?? 0 }
+      ? {
+          ...data.nuevo_referente,
+          celular: normalizarCelular(data.nuevo_referente.celular),
+          barrio_id: data.barrio_id ?? 0
+        }
       : null
   }
 }
@@ -368,13 +403,16 @@ export const crearVotante = async (
     })
   }
 
-  let parsed: { success?: boolean; message?: string; pkey?: number | string }
-  try {
-    parsed = JSON.parse(raw)
-  } catch (reason) {
+  const parsed = parsearJsonSucio<{
+    success?: boolean
+    message?: string
+    pkey?: number | string
+  }>(raw)
+
+  if (!parsed) {
     throw new Error(
-      raw.trim() || 'No pudimos guardar el votante. Intentá de nuevo.',
-      { cause: reason }
+      mensajeDeRespuestaSucia(raw) ||
+        'No pudimos guardar el votante. Intentá de nuevo.'
     )
   }
 
