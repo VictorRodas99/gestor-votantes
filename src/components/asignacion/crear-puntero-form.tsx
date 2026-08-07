@@ -82,7 +82,7 @@ function CrearPunteroForm({ isPending, onSubmit }: CrearPunteroFormProps) {
             <FieldShell label="Celular" error={error?.message}>
               <TextField
                 {...field}
-                placeholder="09XXXXXXXX"
+                placeholder="Ej: 0991123456"
                 error={Boolean(error)}
                 fullWidth
                 slotProps={{ htmlInput: { inputMode: 'numeric' } }}
