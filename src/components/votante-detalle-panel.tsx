@@ -1,7 +1,11 @@
+import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded'
+import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded'
 import Avatar from '@mui/material/Avatar'
+import IconButton from '@mui/material/IconButton'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { useState, type ReactNode } from 'react'
+import { toast } from 'sonner'
 import { useLocalesVotacion } from '../hooks/services/catalogos'
 import { useReferentePorId } from '../hooks/services/referentes'
 import { useVotante } from '../hooks/services/votantes'
@@ -30,22 +34,36 @@ function fallback(value: string | number | null | undefined): string {
 
 const siNo = (value: boolean): string => (value ? 'Sí' : 'No')
 
+async function copiarLinkMaps(url: string) {
+  try {
+    await navigator.clipboard.writeText(url)
+    toast.success('Link de Google Maps copiado')
+  } catch {
+    toast.error('No se pudo copiar el link')
+  }
+}
+
 /** Campo de solo lectura: etiqueta en negrita + valor en caja (estilo del wizard). */
 function DetailField({
   label,
-  value
+  value,
+  action
 }: {
   label: string
   value: string | number | null | undefined
+  action?: ReactNode
 }) {
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-label-md font-semibold text-text-primary">
         {label}
       </span>
-      <span className="rounded-lg border border-divider bg-surface-container-lowest px-4 py-3 text-body-lg text-text-primary">
-        {fallback(value)}
-      </span>
+      <div className="flex items-center gap-2 rounded-lg border border-divider bg-surface-container-lowest px-4 py-3">
+        <span className="min-w-0 flex-1 truncate text-body-lg text-text-primary">
+          {fallback(value)}
+        </span>
+        {action}
+      </div>
     </div>
   )
 }
@@ -98,6 +116,12 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
 
   const local = locales?.find((l) => l.id === votante.localVotacionId)
 
+  const direccionParseada = parsearDireccion(votante.direccion)
+  const urlMaps =
+    direccionParseada.lat != null && direccionParseada.lng != null
+      ? `https://www.google.com/maps/search/?api=1&query=${direccionParseada.lat},${direccionParseada.lng}`
+      : null
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-4">
@@ -132,6 +156,34 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
             <DetailField label="Nombre" value={votante.nombre} />
           </div>
           <DetailField label="Cédula" value={formatCedula(votante.cedula)} />
+          <DetailField
+            label="Dirección"
+            value={direccionParseada.calle}
+            action={
+              urlMaps && (
+                <div className="flex items-center">
+                  <IconButton
+                    onClick={() => copiarLinkMaps(urlMaps)}
+                    size="small"
+                    aria-label="Copiar link de Google Maps"
+                  >
+                    <ContentCopyRoundedIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    component="a"
+                    href={urlMaps}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    size="small"
+                    edge="end"
+                    aria-label="Ver ubicación en Google Maps"
+                  >
+                    <OpenInNewRoundedIcon fontSize="small" />
+                  </IconButton>
+                </div>
+              )
+            }
+          />
           <DetailField label="Nacimiento" value={votante.fechaNacimiento} />
           <DetailField
             label="Sexo"
@@ -139,10 +191,6 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
           />
           <DetailField label="Nacionalidad" value={votante.nacionalidad} />
           <DetailField label="Celular" value={votante.celular} />
-          <DetailField
-            label="Dirección"
-            value={parsearDireccion(votante.direccion).calle}
-          />
           <DetailField label="Referente" value={referente?.nombreApellido} />
         </TabPanel>
       )}
