@@ -12,6 +12,7 @@ import { truncate } from '../lib/format'
 export type VotantesFilterValue = {
   localVotacionId?: number
   estado?: EstadoValue
+  contactado?: boolean
   visitado?: boolean
 }
 
@@ -136,6 +137,19 @@ function VotantesFilterBar({ value, onChange }: VotantesFilterBarProps) {
           ))
         ]}
       </FilterMenu>
+
+      <FormControlLabel
+        className="shrink-0"
+        control={
+          <Switch
+            checked={value.contactado ?? true}
+            onChange={(event) =>
+              onChange({ ...value, contactado: event.target.checked })
+            }
+          />
+        }
+        label="Contactados"
+      />
 
       <FormControlLabel
         className="shrink-0"
