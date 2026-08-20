@@ -243,12 +243,13 @@ function VotanteDetallePanel({ cedula }: VotanteDetallePanelProps) {
             value={siNo(votante.requiereTransporte)}
           />
           <div className="grid grid-cols-2 gap-3">
+            <DetailField label="Contactado" value={siNo(votante.contactado)} />
             <DetailField label="Visitado" value={siNo(votante.visitado)} />
-            <DetailField
-              label="Volver a visitar"
-              value={siNo(votante.volverVisitar)}
-            />
           </div>
+          <DetailField
+            label="Volver a visitar"
+            value={siNo(votante.volverVisitar)}
+          />
         </TabPanel>
       )}
 
