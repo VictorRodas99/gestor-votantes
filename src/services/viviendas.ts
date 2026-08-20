@@ -2,20 +2,23 @@ import { HTTPError } from 'ky'
 import { VIVIENDA_ROUTES } from '../constants/routes'
 import type { ViviendaFormData } from '../forms/vivienda/vivienda.schema'
 import { mensajeDeRespuestaSucia, parsearJsonSucio } from '../lib/api-json'
-import { appendCampo } from '../lib/form-data'
 import api from '../lib/http'
 
 export function toViviendaFormData(data: ViviendaFormData): FormData {
   const form = new FormData()
 
   if (data.foto) form.append('foto', data.foto)
-  if (data.descripcion) appendCampo(form, 'descripcion', data.descripcion)
+  if (data.descripcion) form.append('descripcion', data.descripcion)
 
-  appendCampo(form, 'ubicacion', {
-    calle: data.ubicacion.calle ?? '',
-    lat: data.ubicacion.lat,
-    lng: data.ubicacion.lng
-  })
+  // el endpoint acá guarda crudo, no como en votaciones que hacía json_encode
+  form.append(
+    'ubicacion',
+    JSON.stringify({
+      calle: data.ubicacion.calle ?? '',
+      lat: data.ubicacion.lat,
+      lng: data.ubicacion.lng
+    })
+  )
 
   return form
 }
