@@ -3,6 +3,10 @@ export const VOTANTE_ROUTES = {
   post: 'votaciones'
 } as const
 
+export const VIVIENDA_ROUTES = {
+  post: 'viviendas'
+} as const
+
 export const CATALOGO_ROUTES = {
   localVotacion: 'local_votacion',
   barrios: 'barrios',
