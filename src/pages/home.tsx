@@ -1,7 +1,5 @@
-import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded'
-import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import { Link } from 'react-router-dom'
+import AccionesInicio from '../components/home/acciones-inicio'
 import ModuleCard from '../components/module-card'
 import StatCard from '../components/stat-card'
 import { homeStats } from '../config/home-stats'
@@ -22,14 +20,11 @@ function HomePage() {
             Resumen del estado de la campaña.
           </Typography>
         </div>
-        <Button
-          component={Link}
-          to="/votantes/nuevo"
-          variant="contained"
-          startIcon={<PersonAddAltRoundedIcon />}
-        >
-          Nuevo Votante
-        </Button>
+        <AccionesInicio />
+      </div>
+
+      <div className="lg:hidden">
+        <AccionesInicio compact />
       </div>
 
       <div className="hidden gap-4 lg:grid lg:grid-cols-4">
