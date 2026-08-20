@@ -1,8 +1,99 @@
 import { HTTPError } from 'ky'
+import { VIVIENDAS_PER_PAGE } from '../constants/config'
 import { VIVIENDA_ROUTES } from '../constants/routes'
 import type { ViviendaFormData } from '../forms/vivienda/vivienda.schema'
+import { esCancelacion } from '../lib/abort'
 import { mensajeDeRespuestaSucia, parsearJsonSucio } from '../lib/api-json'
 import api from '../lib/http'
+import type { PaginatedResponse } from '../types/api'
+import type {
+  Vivienda,
+  ViviendaRaw,
+  ViviendaUbicacion
+} from '../types/vivienda'
+
+/**
+ * El endpoint guarda `ubicacion` como JSON crudo en un `varchar`; acá se hace el
+ * camino inverso. Nunca lanza: una fila con JSON corrupto degrada a ubicación
+ * vacía en vez de romper todo el listado.
+ */
+function parseUbicacion(raw: string): ViviendaUbicacion {
+  try {
+    const u = JSON.parse(raw) as Partial<ViviendaUbicacion>
+    return {
+      calle: typeof u.calle === 'string' ? u.calle : '',
+      lat: typeof u.lat === 'number' ? u.lat : null,
+      lng: typeof u.lng === 'number' ? u.lng : null
+    }
+  } catch {
+    return { calle: '', lat: null, lng: null }
+  }
+}
+
+/** Castea el registro crudo (todo string) al modelo de dominio. */
+function mapVivienda(raw: ViviendaRaw): Vivienda {
+  return {
+    id: Number(raw.id),
+    foto: raw.foto ?? '',
+    descripcion: (raw.descripcion ?? '').trim(),
+    ubicacion: parseUbicacion(raw.ubicacion ?? ''),
+    usuarioId:
+      raw.user_id != null && raw.user_id !== '' ? Number(raw.user_id) : null,
+    createdAt: raw.created_at
+  }
+}
+
+export type ViviendasFilters = {
+  desde?: string
+  hasta?: string
+  id?: number
+  page?: number
+  perPage?: number
+}
+
+export type ViviendasResult = {
+  viviendas: Vivienda[]
+  page: number
+}
+
+export const getViviendas = async (
+  filters: ViviendasFilters = {},
+  { signal }: { signal?: AbortSignal } = {}
+): Promise<ViviendasResult> => {
+  const { desde, hasta, id, page = 1, perPage = VIVIENDAS_PER_PAGE } = filters
+
+  const searchParams: Record<string, string | number> = {
+    page,
+    per_page: perPage
+  }
+  if (desde && hasta) {
+    searchParams.desde = desde
+    searchParams.hasta = hasta
+  }
+  if (id != null) searchParams.id = id
+
+  try {
+    const response = await api
+      .get(VIVIENDA_ROUTES.index, { searchParams, signal })
+      .json<PaginatedResponse<ViviendaRaw>>()
+
+    return {
+      viviendas: response.data.map(mapVivienda),
+      page: Number(response.page) || page
+    }
+  } catch (reason) {
+    if (esCancelacion(reason)) throw reason
+
+    // 200 + texto plano ante error
+    if (reason instanceof HTTPError) {
+      throw new Error(reason.message, { cause: reason })
+    }
+
+    throw new Error('No pudimos cargar las viviendas. Intentá de nuevo.', {
+      cause: reason
+    })
+  }
+}
 
 export function toViviendaFormData(data: ViviendaFormData): FormData {
   const form = new FormData()
