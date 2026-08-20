@@ -8,20 +8,19 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import type L from 'leaflet'
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { toast } from 'sonner'
 import { CIUDAD_COORDS_CENTER, MAP_DEFAULT_ZOOM } from '../../constants/map'
-import type { ViviendaFormData } from '../../forms/vivienda/vivienda.schema'
 import { useUbicacionVivienda } from '../../hooks/use-ubicacion-vivienda'
 import { ClickMarker, type LatLng, RecentrarMapa } from '../wizard/map-shared'
 
 const MapPicker = lazy(() => import('../wizard/map-picker'))
 
-export default function ViviendaUbicacionField() {
-  const {
-    formState: { errors }
-  } = useFormContext<ViviendaFormData>()
+export default function ViviendaUbicacionField({
+  errorCoords
+}: {
+  errorCoords?: string
+}) {
   const {
     lat,
     lng,
@@ -40,9 +39,6 @@ export default function ViviendaUbicacionField() {
     const id = window.setTimeout(() => map.invalidateSize(), 150)
     return () => window.clearTimeout(id)
   }, [map])
-
-  const errorCoords =
-    errors.ubicacion?.lat?.message ?? errors.ubicacion?.lng?.message
 
   return (
     <div className="flex flex-col gap-2">
