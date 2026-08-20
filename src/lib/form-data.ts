@@ -10,6 +10,11 @@ export function appendCampo(
     return
   }
 
+  if (valor instanceof Blob) {
+    form.append(clave, valor)
+    return
+  }
+
   if (typeof valor === 'object') {
     for (const [subclave, subvalor] of Object.entries(valor)) {
       appendCampo(form, `${clave}[${subclave}]`, subvalor)
