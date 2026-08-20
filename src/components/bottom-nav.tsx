@@ -4,6 +4,10 @@ import { useLocation } from 'react-router-dom'
 import { bottomNavItems, resolveActiveKey } from '../config/modules'
 import { navLinkProps } from '../lib/nav-link-props'
 
+function navLabel(item: { label: string; labelCorto?: string }): string {
+  return item.labelCorto ?? item.label
+}
+
 /**
  * Navegación inferior fija (mobile/tablet). Deriva de `bottomNavItems` (Inicio +
  * módulos con `inBottomNav`). El ítem activo se resuelve por la URL. En desktop
@@ -25,7 +29,7 @@ function BottomNav() {
         <BottomNavigationAction
           key={item.key}
           value={item.key}
-          label={item.label}
+          label={navLabel(item)}
           {...navLinkProps(item)}
           icon={<item.Icon className="size-7" />}
         />

@@ -3,12 +3,15 @@ import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded'
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded'
+import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded'
 import type { ComponentType, LazyExoticComponent } from 'react'
 import { lazy } from 'react'
 
 type ModuloBase = {
   key: string
   label: string
+  /** Label corto para la bottom-nav cuando `label` es muy largo para una pestaña. */
+  labelCorto?: string
   path: string
   Icon: SvgIconComponent
   /** Si el módulo aparece como acceso directo en la navegación inferior. */
@@ -39,6 +42,15 @@ export const modules: AppModule[] = [
     Icon: GroupsRoundedIcon,
     inBottomNav: true,
     Component: lazy(() => import('../pages/votantes'))
+  },
+  {
+    key: 'viviendas',
+    label: 'Viviendas No Atendidas',
+    labelCorto: 'Viviendas',
+    path: '/viviendas-no-atendidas',
+    Icon: MapsHomeWorkRoundedIcon,
+    inBottomNav: true,
+    Component: lazy(() => import('../pages/viviendas-no-atendidas'))
   },
   // {
   //   key: 'asignacion',
