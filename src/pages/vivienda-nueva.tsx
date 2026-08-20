@@ -4,7 +4,12 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormState
+} from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import FotoField from '../components/vivienda/foto-field'
@@ -18,7 +23,7 @@ import { useCrearVivienda } from '../hooks/services/viviendas'
 
 const VALORES_INICIALES = { descripcion: '', ubicacion: { calle: '' } }
 
-function ViviendasNoAtendidasPage() {
+function ViviendaNuevaPage() {
   const navigate = useNavigate()
   const esDesktop = useMediaQuery('(min-width:1024px)')
   const { mutateAsync, isPending } = useCrearVivienda()
@@ -28,6 +33,10 @@ function ViviendasNoAtendidasPage() {
     mode: 'onTouched',
     defaultValues: VALORES_INICIALES
   })
+
+  const { errors } = useFormState({ control: form.control })
+  const errorCoords =
+    errors.ubicacion?.lat?.message ?? errors.ubicacion?.lng?.message
 
   const onSubmit = async (data: ViviendaFormData) => {
     try {
@@ -63,7 +72,7 @@ function ViviendasNoAtendidasPage() {
             <FotoField />
 
             {/* En mobile la Ubicación va entre Foto y Dirección */}
-            {!esDesktop && <ViviendaUbicacionField />}
+            {!esDesktop && <ViviendaUbicacionField errorCoords={errorCoords} />}
 
             <Controller
               name="ubicacion.calle"
@@ -117,7 +126,9 @@ function ViviendasNoAtendidasPage() {
           {/* Columna derecha mapa persistente (solo desktop) */}
           <aside className="hidden lg:col-span-5 lg:block">
             <div className="lg:sticky lg:top-24">
-              {esDesktop && <ViviendaUbicacionField />}
+              {esDesktop && (
+                <ViviendaUbicacionField errorCoords={errorCoords} />
+              )}
             </div>
           </aside>
         </div>
@@ -148,4 +159,4 @@ function ViviendasNoAtendidasPage() {
   )
 }
 
-export default ViviendasNoAtendidasPage
+export default ViviendaNuevaPage

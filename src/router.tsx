@@ -9,7 +9,7 @@ import NotFound from './pages/not-found'
 
 const lazyPages = {
   votanteWizard: lazy(() => import('./pages/votante-wizard')),
-  viviendasNoAtendidas: lazy(() => import('./pages/viviendas-no-atendidas'))
+  viviendaNueva: lazy(() => import('./pages/vivienda-nueva'))
 }
 
 export const router = createBrowserRouter(
@@ -25,8 +25,8 @@ export const router = createBrowserRouter(
         })),
         { path: 'votantes/nuevo', element: <lazyPages.votanteWizard /> },
         {
-          path: 'viviendas-no-atendidas',
-          element: <lazyPages.viviendasNoAtendidas />
+          path: 'viviendas-no-atendidas/nueva',
+          element: <lazyPages.viviendaNueva />
         },
         { path: '*', element: <NotFound /> }
       ]

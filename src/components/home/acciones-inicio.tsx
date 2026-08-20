@@ -12,7 +12,7 @@ function AccionesInicio({ compact }: AccionesInicioProps) {
     <div className={compact ? 'flex gap-3 md:justify-end' : 'flex gap-3'}>
       <Button
         component={Link}
-        to="/viviendas-no-atendidas"
+        to="/viviendas-no-atendidas/nueva"
         variant="outlined"
         startIcon={<MapsHomeWorkRoundedIcon />}
         className={compact ? 'flex-1 md:flex-none' : undefined}
