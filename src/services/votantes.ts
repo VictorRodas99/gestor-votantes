@@ -62,6 +62,7 @@ function mapVotante(raw: VotanteRaw): Votante {
     votoIntendenteAnr: toBoolean(raw.voto_intendente_anr),
     votoIntendenteAlianza: toBoolean(raw.voto_intendente_alianza),
     votoConcejal: toBoolean(raw.voto_concejal),
+    contactado: toBoolean(raw.contactado),
     visitado: toBoolean(raw.visitado),
     volverVisitar: toBoolean(raw.volver_visitar),
     localVotacionId: Number(raw.local_votacion_id),
@@ -106,6 +107,7 @@ export type VotantesFilters = {
   votoSeguro?: boolean
   afiliacion?: boolean
   movil?: boolean
+  contactado?: boolean
   visitado?: boolean
   page?: number
   perPage?: number
@@ -130,6 +132,7 @@ export const getVotantes = async (
     votoSeguro,
     afiliacion,
     movil,
+    contactado,
     visitado,
     page = 1,
     perPage = VOTANTES_PER_PAGE
@@ -148,6 +151,7 @@ export const getVotantes = async (
   if (votoSeguro != null) searchParams.voto_seguro = votoSeguro ? 1 : 0
   if (afiliacion) searchParams.afiliacion = 1
   if (movil) searchParams.movil = 1
+  if (contactado != null) searchParams.contactado = contactado ? 1 : 0
   if (visitado != null) searchParams.visitado = visitado ? 1 : 0
 
   try {
@@ -296,6 +300,7 @@ export type VotantePayload = {
   voto_intendente_alianza: boolean
   voto_concejal: boolean
   movil: boolean
+  contactado: boolean
   visitado: boolean
   volver_visitar: boolean
   encargado_visita: string | null
@@ -346,6 +351,7 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
       : false,
     voto_concejal: data.voto_concejal,
     movil: data.movil,
+    contactado: data.contactado,
     visitado: data.visitado,
     volver_visitar: data.volver_visitar,
     encargado_visita: data.encargado_visita || null,

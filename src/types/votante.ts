@@ -43,6 +43,8 @@ export type VotanteRaw = {
   tipo_visita: string | null
   /** Vínculo votante↔referente (FK 1:N). `"0"` = sin asignar. */
   referente_id: string
+  /** Contactado pero aún no visitado. Columna nueva NULLable → puede venir `null`. */
+  contactado: string | null
   visitado: string
   volver_visitar: string | null
 }
@@ -72,6 +74,8 @@ export type Votante = {
   votoIntendenteAnr: boolean
   votoIntendenteAlianza: boolean
   votoConcejal: boolean
+  /** Contactado pero aún no visitado (estado previo a `visitado`). */
+  contactado: boolean
   visitado: boolean
   volverVisitar: boolean
   localVotacionId: number
