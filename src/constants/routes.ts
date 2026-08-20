@@ -4,6 +4,7 @@ export const VOTANTE_ROUTES = {
 } as const
 
 export const VIVIENDA_ROUTES = {
+  index: 'viviendas',
   post: 'viviendas'
 } as const
 
