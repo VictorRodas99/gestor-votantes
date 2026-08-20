@@ -26,6 +26,7 @@ const pasoDosDefaults = {
   voto_intendente_alianza: false,
   voto_concejal: false,
   movil: false,
+  contactado: false,
   visitado: false,
   volver_visitar: false
 } as const

@@ -22,6 +22,7 @@ export const pasoDosSchema = z.object({
   voto_intendente_alianza: z.boolean(),
   voto_concejal: z.boolean(),
   movil: z.boolean(),
+  contactado: z.boolean(),
   visitado: z.boolean(),
   volver_visitar: z.boolean()
 })

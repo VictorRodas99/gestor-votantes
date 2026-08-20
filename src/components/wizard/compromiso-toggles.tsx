@@ -1,6 +1,7 @@
 import type { SvgIconComponent } from '@mui/icons-material'
 import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded'
 import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded'
+import ContactPhoneRoundedIcon from '@mui/icons-material/ContactPhoneRounded'
 import DirectionsCarRoundedIcon from '@mui/icons-material/DirectionsCarRounded'
 import EventRepeatRoundedIcon from '@mui/icons-material/EventRepeatRounded'
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
@@ -19,6 +20,7 @@ type ToggleName =
   | 'voto_intendente_alianza'
   | 'voto_concejal'
   | 'movil'
+  | 'contactado'
   | 'visitado'
   | 'volver_visitar'
 
@@ -55,6 +57,7 @@ const TOGGLES: ToggleRow[] = [
     Icon: DirectionsCarRoundedIcon,
     accent: true
   },
+  { name: 'contactado', label: 'Contactado', Icon: ContactPhoneRoundedIcon },
   { name: 'visitado', label: 'Visitado', Icon: HowToRegRoundedIcon },
   {
     name: 'volver_visitar',
