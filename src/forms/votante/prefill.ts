@@ -41,6 +41,7 @@ export function votanteAValoresWizard(
     voto_intendente_alianza: votante.votoIntendenteAlianza,
     voto_concejal: votante.votoConcejal,
     movil: votante.requiereTransporte,
+    contactado: true,
     visitado: votante.visitado,
     volver_visitar: votante.volverVisitar,
 
