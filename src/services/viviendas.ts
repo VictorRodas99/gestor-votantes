@@ -30,6 +30,8 @@ export type CrearViviendaResponse = {
   pkey: number
 }
 
+const VIVIENDA_POST_TIMEOUT_MS = 20_000
+
 export const crearVivienda = async (
   data: ViviendaFormData
 ): Promise<CrearViviendaResponse> => {
@@ -37,7 +39,10 @@ export const crearVivienda = async (
 
   try {
     raw = await api
-      .post(VIVIENDA_ROUTES.post, { body: toViviendaFormData(data) })
+      .post(VIVIENDA_ROUTES.post, {
+        body: toViviendaFormData(data),
+        timeout: VIVIENDA_POST_TIMEOUT_MS
+      })
       .text()
   } catch (reason) {
     if (reason instanceof HTTPError) {
