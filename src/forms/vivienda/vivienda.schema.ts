@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const TIPOS_IMAGEN = ['image/jpeg', 'image/png', 'image/webp'] as const
-export const MAX_FOTO_BYTES = 5 * 1024 * 1024 // 5 MB
+export const MAX_FOTO_BYTES = 2 * 1024 * 1024 // 2 MB
 
 export const viviendaSchema = z.object({
   foto: z
@@ -11,7 +11,7 @@ export const viviendaSchema = z.object({
         TIPOS_IMAGEN.includes(file.type as (typeof TIPOS_IMAGEN)[number]),
       'Formato no permitido'
     )
-    .refine((file) => file.size <= MAX_FOTO_BYTES, 'La imagen supera los 5 MB')
+    .refine((file) => file.size <= MAX_FOTO_BYTES, 'La imagen supera los 2 MB')
     .optional(),
   descripcion: z.string().trim().max(255, 'Máximo 255 caracteres').optional(),
   ubicacion: z.object({
