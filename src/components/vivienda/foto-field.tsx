@@ -1,5 +1,6 @@
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
+import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded'
 import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import imageCompression from 'browser-image-compression'
@@ -26,7 +27,9 @@ export default function FotoField() {
   const file = field.value
   const [dragActive, setDragActive] = useState(false)
   const [procesando, setProcesando] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+
+  const galeriaRef = useRef<HTMLInputElement>(null)
+  const camaraRef = useRef<HTMLInputElement>(null)
 
   const preview = useMemo(
     () => (file ? URL.createObjectURL(file) : null),
@@ -70,15 +73,24 @@ export default function FotoField() {
 
   const quitar = () => {
     field.onChange(undefined)
-    if (inputRef.current) inputRef.current.value = ''
+    if (galeriaRef.current) galeriaRef.current.value = ''
+    if (camaraRef.current) camaraRef.current.value = ''
   }
 
   return (
     <FieldShell label="Foto de vivienda" error={fieldState.error?.message}>
       <input
-        ref={inputRef}
+        ref={galeriaRef}
         type="file"
         accept="image/*"
+        hidden
+        onChange={(event) => validarYSetear(event.target.files?.[0])}
+      />
+      <input
+        ref={camaraRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
         hidden
         onChange={(event) => validarYSetear(event.target.files?.[0])}
       />
@@ -100,47 +112,59 @@ export default function FotoField() {
           </IconButton>
         </div>
       ) : (
-        <button
-          type="button"
-          disabled={procesando}
-          onClick={() => inputRef.current?.click()}
-          onDragOver={(event) => {
-            event.preventDefault()
-            setDragActive(true)
-          }}
-          onDragLeave={() => setDragActive(false)}
-          onDrop={(event) => {
-            event.preventDefault()
-            setDragActive(false)
-            if (!procesando) validarYSetear(event.dataTransfer.files?.[0])
-          }}
-          className={`flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-4 py-10 text-center transition-colors disabled:opacity-60 ${
-            dragActive ? 'border-primary bg-primary/5' : 'border-divider'
-          }`}
-        >
-          <span className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-contrast lg:size-16">
-            {procesando ? (
-              <CircularProgress size={24} className="text-primary-contrast" />
-            ) : (
-              <AddPhotoAlternateRoundedIcon className="size-7 lg:size-8" />
-            )}
-          </span>
-          <span className="text-body-md font-semibold text-text-primary">
-            {procesando ? (
-              'Procesando imagen…'
-            ) : (
-              <>
-                <span className="hidden lg:inline">
-                  Arrastre una imagen o haga clic para subir
-                </span>
-                <span className="lg:hidden">Toca para subir o tomar foto</span>
-              </>
-            )}
-          </span>
-          <span className="text-label-sm text-text-secondary">
-            JPG, PNG o WEBP · máx. 2 MB
-          </span>
-        </button>
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            disabled={procesando}
+            onClick={() => galeriaRef.current?.click()}
+            onDragOver={(event) => {
+              event.preventDefault()
+              setDragActive(true)
+            }}
+            onDragLeave={() => setDragActive(false)}
+            onDrop={(event) => {
+              event.preventDefault()
+              setDragActive(false)
+              if (!procesando) validarYSetear(event.dataTransfer.files?.[0])
+            }}
+            className={`flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-4 py-10 text-center transition-colors disabled:opacity-60 ${
+              dragActive ? 'border-primary bg-primary/5' : 'border-divider'
+            }`}
+          >
+            <span className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-contrast lg:size-16">
+              {procesando ? (
+                <CircularProgress size={24} className="text-primary-contrast" />
+              ) : (
+                <AddPhotoAlternateRoundedIcon className="size-7 lg:size-8" />
+              )}
+            </span>
+            <span className="text-body-md font-semibold text-text-primary">
+              {procesando ? (
+                'Procesando imagen…'
+              ) : (
+                <>
+                  <span className="hidden lg:inline">
+                    Arrastre una imagen o haga clic para subir
+                  </span>
+                  <span className="lg:hidden">Toca para elegir de galería</span>
+                </>
+              )}
+            </span>
+            <span className="text-label-sm text-text-secondary">
+              JPG, PNG o WEBP · máx. 2 MB
+            </span>
+          </button>
+
+          <button
+            type="button"
+            disabled={procesando}
+            onClick={() => camaraRef.current?.click()}
+            className="text-label-lg flex items-center justify-center gap-2 rounded-lg border border-divider px-4 py-3 font-semibold text-text-primary transition-colors disabled:opacity-60 lg:hidden"
+          >
+            <PhotoCameraRoundedIcon className="size-5" />
+            Tomar foto
+          </button>
+        </div>
       )}
     </FieldShell>
   )
