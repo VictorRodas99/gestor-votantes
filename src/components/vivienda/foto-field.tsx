@@ -1,6 +1,8 @@
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
+import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
+import imageCompression from 'browser-image-compression'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -11,11 +13,19 @@ import {
 } from '../../forms/vivienda/vivienda.schema'
 import { FieldShell } from '../wizard/form-field'
 
+// comprimir client side porque las fotos de las cámaras pueden ser muy pesadas
+const OPCIONES_COMPRESION = {
+  maxSizeMB: 1,
+  maxWidthOrHeight: 1600,
+  useWebWorker: true
+}
+
 export default function FotoField() {
   const { control } = useFormContext<ViviendaFormData>()
   const { field, fieldState } = useController({ name: 'foto', control })
   const file = field.value
   const [dragActive, setDragActive] = useState(false)
+  const [procesando, setProcesando] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const preview = useMemo(
@@ -28,18 +38,34 @@ export default function FotoField() {
     return () => URL.revokeObjectURL(preview)
   }, [preview])
 
-  const validarYSetear = (elegido: File | undefined) => {
+  const validarYSetear = async (elegido: File | undefined) => {
     if (!elegido) return
 
     if (!TIPOS_IMAGEN.includes(elegido.type as (typeof TIPOS_IMAGEN)[number])) {
       toast.error('Formato no permitido. Usá JPG, PNG o WEBP.')
       return
     }
-    if (elegido.size > MAX_FOTO_BYTES) {
-      toast.error('La imagen supera los 5 MB.')
-      return
+
+    setProcesando(true)
+    try {
+      const comprimido = await imageCompression(elegido, OPCIONES_COMPRESION)
+
+      const archivo = new File([comprimido], elegido.name, {
+        type: comprimido.type || elegido.type,
+        lastModified: Date.now()
+      })
+
+      // gurdia por si comprimir no comprime menor a 2MB igual
+      if (archivo.size > MAX_FOTO_BYTES) {
+        toast.error('La imagen supera los 2 MB aún comprimida. Probá con otra.')
+        return
+      }
+      field.onChange(archivo)
+    } catch {
+      toast.error('No pudimos procesar la imagen. Probá con otra.')
+    } finally {
+      setProcesando(false)
     }
-    field.onChange(elegido)
   }
 
   const quitar = () => {
@@ -76,6 +102,7 @@ export default function FotoField() {
       ) : (
         <button
           type="button"
+          disabled={procesando}
           onClick={() => inputRef.current?.click()}
           onDragOver={(event) => {
             event.preventDefault()
@@ -85,23 +112,33 @@ export default function FotoField() {
           onDrop={(event) => {
             event.preventDefault()
             setDragActive(false)
-            validarYSetear(event.dataTransfer.files?.[0])
+            if (!procesando) validarYSetear(event.dataTransfer.files?.[0])
           }}
-          className={`flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-4 py-10 text-center transition-colors ${
+          className={`flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-4 py-10 text-center transition-colors disabled:opacity-60 ${
             dragActive ? 'border-primary bg-primary/5' : 'border-divider'
           }`}
         >
           <span className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-contrast lg:size-16">
-            <AddPhotoAlternateRoundedIcon className="size-7 lg:size-8" />
+            {procesando ? (
+              <CircularProgress size={24} className="text-primary-contrast" />
+            ) : (
+              <AddPhotoAlternateRoundedIcon className="size-7 lg:size-8" />
+            )}
           </span>
           <span className="text-body-md font-semibold text-text-primary">
-            <span className="hidden lg:inline">
-              Arrastre una imagen o haga clic para subir
-            </span>
-            <span className="lg:hidden">Toca para subir o tomar foto</span>
+            {procesando ? (
+              'Procesando imagen…'
+            ) : (
+              <>
+                <span className="hidden lg:inline">
+                  Arrastre una imagen o haga clic para subir
+                </span>
+                <span className="lg:hidden">Toca para subir o tomar foto</span>
+              </>
+            )}
           </span>
           <span className="text-label-sm text-text-secondary">
-            JPG, PNG o WEBP · máx. 5 MB
+            JPG, PNG o WEBP · máx. 2 MB
           </span>
         </button>
       )}
