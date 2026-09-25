@@ -98,6 +98,11 @@
   --spacing-stack-lg: 24px;
   /* Alto reservado bajo el contenido para la barra inferior fija (pb-bottom-nav). */
   --spacing-bottom-nav: 6rem;
+  /*
+   * Alto del TopBar en desktop: Toolbar de MUI (64px desde `sm`) + el borde
+   * inferior. Lo usa el panel de detalle para calcular su alto visible.
+   */
+  --spacing-topbar: calc(4rem + 1px);
 
   /* Elevación de tarjeta interactiva (index.md §Elevación). */
   --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -126,4 +131,13 @@
   --text-label-sm--line-height: 16px;
   --text-label-sm--font-weight: 500;
   --text-label-sm--letter-spacing: 0.04em;
+}
+
+/* Scroll sin barra visible (panel de detalle en desktop). */
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
