@@ -45,6 +45,10 @@ export type VotanteRaw = {
   tipo_visita: string | null
   /** Vínculo votante↔referente (FK 1:N). `"0"` = sin asignar. */
   referente_id: string
+  yavoto: string
+  cobro: string
+  /** Observación de la jornada; no confundir con `observacion` (la de la visita). */
+  obs: string
   /** Contactado pero aún no visitado. Columna nueva NULLable → puede venir `null`. */
   contactado: string | null
   visitado: string
@@ -111,4 +115,8 @@ export type Votante = {
   valorInc: number
   /** `0` = sin referente asignado. */
   referenteId: number
+  yaVoto: boolean
+  /** Solo puede ser `true` si `yaVoto` lo es. */
+  cobro: boolean
+  obs: string
 }
