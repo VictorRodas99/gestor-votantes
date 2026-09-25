@@ -41,7 +41,9 @@ function VotanteDetalleDialog({ cedula, onClose }: VotanteDetalleDialogProps) {
       </AppBar>
 
       <div className="px-5 py-6">
-        {cedula ? <VotanteDetallePanel cedula={cedula} /> : null}
+        {cedula ? (
+          <VotanteDetallePanel cedula={cedula} variante="dialog" />
+        ) : null}
       </div>
     </Dialog>
   )
