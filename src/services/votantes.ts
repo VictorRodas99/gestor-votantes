@@ -86,7 +86,10 @@ function mapVotante(raw: VotanteRaw): Votante {
     mercaderia: toBoolean(raw.mercaderia),
     inc: toBoolean(raw.inc),
     valorInc: Number(raw.valor_inc) || 0,
-    referenteId: Number(raw.referente_id) || 0
+    referenteId: Number(raw.referente_id) || 0,
+    yaVoto: toBoolean(raw.yavoto),
+    cobro: toBoolean(raw.cobro),
+    obs: raw.obs?.trim() ?? ''
   }
 }
 
@@ -313,6 +316,9 @@ export type VotantePayload = {
   mercaderia: boolean
   inc: boolean
   valor_inc: number
+  yavoto: boolean
+  cobro: boolean
+  obs: string
   nuevo_referente: (ReferenteFormData & { barrio_id: number }) | null
 }
 
@@ -366,6 +372,11 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     mercaderia: data.mercaderia,
     inc: data.inc,
     valor_inc: data.inc ? (data.valor_inc ?? 0) : 0,
+    // Viajan siempre, también desde el wizard: cuando el server los escriba con
+    // `??0`, un POST que los omita le borraría al votante el "ya votó".
+    yavoto: data.yavoto,
+    cobro: data.yavoto ? data.cobro : false,
+    obs: data.obs ?? '',
     nuevo_referente: data.nuevo_referente
       ? {
           ...data.nuevo_referente,
