@@ -1,4 +1,5 @@
 import type { z } from 'zod'
+import { jornadaSchema } from './jornada.schema'
 import { pasoDosSchema } from './paso-dos.schema'
 import { pasoTresSchema } from './paso-tres.schema'
 import { pasoUnoSchema } from './paso-uno.schema'
@@ -57,6 +58,19 @@ function reglasInc(
   }
 }
 
+function reglasJornada(
+  data: { yavoto: boolean; cobro: boolean },
+  ctx: z.RefinementCtx
+) {
+  if (data.cobro && !data.yavoto) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'No puede cobrar sin haber votado',
+      path: ['cobro']
+    })
+  }
+}
+
 // Schemas por paso: incluyen sus propias reglas entre-campos, así se pueden
 // validar de a uno al avanzar sin que los campos de los otros pasos (todavía
 // vacíos) corten la ejecución del refinamiento.
@@ -69,6 +83,7 @@ export const pasoDosCompletoSchema = pasoDosSchema.superRefine(reglasIntendente)
 export const wizardSchema = pasoUnoSchema
   .extend(pasoDosSchema.shape)
   .extend(pasoTresSchema.shape)
+  .extend(jornadaSchema.shape)
   .extend({
     nuevo_referente: referenteSchema.optional()
   })
@@ -76,6 +91,7 @@ export const wizardSchema = pasoUnoSchema
     reglaBarrioDelNuevoReferente(data, ctx)
     reglasIntendente(data, ctx)
     reglasInc(data, ctx)
+    reglasJornada(data, ctx)
   })
 
 export type WizardFormData = z.infer<typeof wizardSchema>
