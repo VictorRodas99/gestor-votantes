@@ -38,9 +38,16 @@ function reglasIntendente(
 }
 
 function reglasInc(
-  data: { inc: boolean; valor_inc?: number },
+  data: { inc: boolean; valor_inc?: number; mercaderia: boolean },
   ctx: z.RefinementCtx
 ) {
+  if (data.inc && data.mercaderia) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Elija mercadería o inc., no ambas',
+      path: ['mercaderia']
+    })
+  }
   if (data.inc && !data.valor_inc) {
     ctx.addIssue({
       code: 'custom',
