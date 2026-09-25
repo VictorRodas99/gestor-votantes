@@ -36,6 +36,8 @@ export type VotanteRaw = {
   voto_intendente: string
   voto_intendente_anr: string | null
   voto_intendente_alianza: string | null
+  /** Columna nullable (default `0`). */
+  mercaderia: string | null
   inc: string
   valor_inc: string
   encargado_visita: string | null
@@ -104,6 +106,7 @@ export type Votante = {
   familiar: boolean
   /** `null` mientras `familiar` sea false o no se haya cargado. */
   nombreFamiliar: string | null
+  mercaderia: boolean
   inc: boolean
   valorInc: number
   /** `0` = sin referente asignado. */
