@@ -12,7 +12,7 @@ import type { VotantesFilters } from '../services/votantes'
 import type { Votante } from '../types/votante'
 import EmptyState from './empty-state'
 import ErrorState from './error-state'
-import { VotoEstadoChip } from './votante-chips'
+import { VotoEstadoChip, YaVotoChip } from './votante-chips'
 import VotantesLoading from './votantes-loading'
 
 type VotantesListDesktopProps = {
@@ -99,7 +99,10 @@ function VotantesListDesktop({
                   {formatCedula(votante.cedula)}
                 </TableCell>
                 <TableCell>
-                  <VotoEstadoChip votante={votante} />
+                  <div className="flex flex-wrap gap-2">
+                    <YaVotoChip votante={votante} />
+                    <VotoEstadoChip votante={votante} />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
