@@ -6,6 +6,7 @@ import type { WizardStepProps } from '../../types/wizard'
 import FamiliarFields from './familiar-fields'
 import FormField from './form-field'
 import IncFields from './inc-fields'
+import MercaderiaField from './mercaderia-field'
 import SectionTitle from './section-title'
 import VotanteActualCard from './votante-actual-card'
 
@@ -54,6 +55,7 @@ export default function StepDatosVisita({
           />
 
           <FamiliarFields />
+          <MercaderiaField />
           <IncFields />
         </div>
 
