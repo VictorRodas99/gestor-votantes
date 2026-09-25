@@ -1,6 +1,7 @@
 import type { DefaultValues } from 'react-hook-form'
 import { parsearDireccion } from '../../lib/direccion'
 import type { Votante } from '../../types/votante'
+import crearValoresPorDefecto from './default-values'
 import type { WizardFormData } from './wizard.schema'
 
 /**
@@ -53,6 +54,25 @@ export function votanteAValoresWizard(
     nombre_familiar: votante.nombreFamiliar ?? '',
     mercaderia: votante.mercaderia,
     inc: votante.inc,
-    valor_inc: votante.valorInc || undefined
+    valor_inc: votante.valorInc || undefined,
+
+    yavoto: votante.yaVoto,
+    cobro: votante.cobro,
+    obs: votante.obs
+  }
+}
+
+/**
+ * Valores del detalle editable. A diferencia del wizard respeta `contactado`:
+ * el prefill lo fuerza a `true` porque quien carga está contactando, pero abrir
+ * el detalle no es contactar a nadie.
+ */
+export function votanteAValoresDetalle(
+  votante: Votante
+): DefaultValues<WizardFormData> {
+  return {
+    ...crearValoresPorDefecto(),
+    ...votanteAValoresWizard(votante),
+    contactado: votante.contactado
   }
 }
