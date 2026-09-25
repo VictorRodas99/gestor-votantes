@@ -133,10 +133,12 @@ function VotantesPage() {
         </div>
 
         {isLg ? (
-          <aside className="sticky top-6 w-96 shrink-0 self-start border-l border-divider pl-6">
+          // Alto fijo al visible bajo el TopBar (menos el padding de `main`) y
+          // scroll propio: lista y detalle ya no comparten el de la ventana.
+          <aside className="sticky top-[calc(var(--spacing-topbar)+1.25rem)] flex h-[calc(100svh-var(--spacing-topbar)-2.5rem)] w-96 shrink-0 flex-col self-start border-l border-divider pl-6 xl:w-md">
             {selectedCedula ? (
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2">
+              <div className="flex min-h-0 flex-1 flex-col gap-4">
+                <div className="flex flex-none items-center gap-2">
                   <h2 className="text-title-md flex-1 font-semibold text-primary">
                     Detalle del votante
                   </h2>
@@ -148,7 +150,7 @@ function VotantesPage() {
                     <CloseRoundedIcon />
                   </IconButton>
                 </div>
-                <VotanteDetallePanel cedula={selectedCedula} />
+                <VotanteDetallePanel cedula={selectedCedula} variante="panel" />
               </div>
             ) : (
               <EmptyState
