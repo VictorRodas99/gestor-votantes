@@ -38,6 +38,7 @@ const pasoTresDefaults = {
   fecha_visita: '',
   observacion: '',
   familiar: false,
+  mercaderia: false,
   inc: false,
   valor_inc: undefined
 } as const
