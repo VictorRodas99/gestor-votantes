@@ -83,6 +83,7 @@ function mapVotante(raw: VotanteRaw): Votante {
     observacion: raw.observacion.trim(),
     familiar: toBoolean(raw.familiar),
     nombreFamiliar: raw.nombre_familiar,
+    mercaderia: toBoolean(raw.mercaderia),
     inc: toBoolean(raw.inc),
     valorInc: Number(raw.valor_inc) || 0,
     referenteId: Number(raw.referente_id) || 0
@@ -309,6 +310,7 @@ export type VotantePayload = {
   observacion: string
   familiar: boolean
   nombre_familiar: string | null
+  mercaderia: boolean
   inc: boolean
   valor_inc: number
   nuevo_referente: (ReferenteFormData & { barrio_id: number }) | null
@@ -361,6 +363,7 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     familiar: data.familiar,
     // Sin familiar, el nombre no significa nada (mismo criterio que valor_inc).
     nombre_familiar: data.familiar ? data.nombre_familiar || null : null,
+    mercaderia: data.mercaderia,
     inc: data.inc,
     valor_inc: data.inc ? (data.valor_inc ?? 0) : 0,
     nuevo_referente: data.nuevo_referente
