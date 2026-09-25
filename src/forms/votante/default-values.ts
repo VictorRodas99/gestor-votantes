@@ -43,6 +43,12 @@ const pasoTresDefaults = {
   valor_inc: undefined
 } as const
 
+const jornadaDefaults = {
+  yavoto: false,
+  cobro: false,
+  obs: ''
+} as const
+
 /**
  * Es una **factory** y no un objeto literal para que cada `reset` parta de un
  * objeto propio y no comparta el `direccion` anidado entre altas.
@@ -52,6 +58,7 @@ export default function crearValoresPorDefecto() {
     ...pasoUnoDefaults,
     ...pasoDosDefaults,
     ...pasoTresDefaults,
+    ...jornadaDefaults,
     direccion: { ...pasoUnoDefaults.direccion }
   }
 }
