@@ -51,6 +51,7 @@ export function votanteAValoresWizard(
     observacion: votante.observacion,
     familiar: votante.familiar,
     nombre_familiar: votante.nombreFamiliar ?? '',
+    mercaderia: votante.mercaderia,
     inc: votante.inc,
     valor_inc: votante.valorInc || undefined
   }
