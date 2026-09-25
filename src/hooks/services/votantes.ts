@@ -6,6 +6,10 @@ import {
   useQuery,
   useQueryClient
 } from '@tanstack/react-query'
+import type { DefaultValues } from 'react-hook-form'
+import { aplicarCamposModificados } from '../../forms/votante/aplicar-campos-modificados'
+import { votanteAValoresDetalle } from '../../forms/votante/prefill'
+import type { WizardFormData } from '../../forms/votante/wizard.schema'
 import { esCelularValido, normalizarCelular } from '../../lib/telefono'
 import { buildSearchFilters } from '../../lib/votante-search'
 import {
@@ -117,16 +121,59 @@ export const useAsegurarCelularLibre = () => {
   }
 }
 
+const opcionesVotante = (cedula: string) =>
+  queryOptions({
+    queryKey: [BASE_VOTANTE_QUERY, 'detalle', cedula],
+    queryFn: () => getVotanteByCedula(cedula),
+    staleTime: VOTANTES_STALE_TIME
+  })
+
 /**
  * Detalle de un votante por cédula (panel / modal de detalle). Solo consulta
  * cuando hay una cédula seleccionada.
  */
 export const useVotante = (cedula: string | null) => {
   return useQuery({
-    queryKey: [BASE_VOTANTE_QUERY, 'detalle', cedula],
-    queryFn: () => getVotanteByCedula(cedula as string),
-    enabled: Boolean(cedula),
-    staleTime: VOTANTES_STALE_TIME
+    ...opcionesVotante(cedula ?? ''),
+    enabled: Boolean(cedula)
+  })
+}
+
+type ActualizarVotanteVariables = {
+  editado: WizardFormData
+  /** Valores con los que se abrió el form: lo que no difiera sale del server. */
+  inicial: DefaultValues<WizardFormData>
+}
+
+/**
+ * Guardado desde el detalle editable. Re-trae el votante justo antes del POST
+ * y le aplica solo lo que se editó (`aplicarCamposModificados`), para no pisar
+ * lo que otro operador guardó mientras el detalle estaba abierto.
+ *
+ * Devuelve lo que se guardó para que el form lo tome como nuevo punto de
+ * partida.
+ */
+export const useActualizarVotante = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ editado, inicial }: ActualizarVotanteVariables) => {
+      const fresco = await queryClient.fetchQuery({
+        ...opcionesVotante(editado.cedula),
+        staleTime: 0
+      })
+      if (!fresco) throw new Error('El votante ya no existe en el padrón')
+
+      const guardado = aplicarCamposModificados(
+        editado,
+        inicial,
+        votanteAValoresDetalle(fresco)
+      )
+      const respuesta = await crearVotante(guardado)
+      return { respuesta, guardado }
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: [BASE_VOTANTE_QUERY] })
   })
 }
 
