@@ -27,7 +27,9 @@ export default function IncFields() {
               checked={Boolean(field.value)}
               onChange={(_, checked) => {
                 field.onChange(checked)
-                if (!checked) {
+                if (checked) {
+                  setValue('mercaderia', false, { shouldValidate: true })
+                } else {
                   setValue('valor_inc', undefined, { shouldValidate: true })
                 }
               }}
