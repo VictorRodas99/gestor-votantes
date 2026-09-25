@@ -10,6 +10,7 @@ export const pasoTresSchema = z.object({
   fecha_visita: z.iso.date('Fecha inválida').optional().or(z.literal('')),
   observacion: z.string().trim().max(255).optional(),
   familiar: z.boolean(),
+  mercaderia: z.boolean(),
   inc: z.boolean(),
   valor_inc: z.number().int().positive().optional()
 })
