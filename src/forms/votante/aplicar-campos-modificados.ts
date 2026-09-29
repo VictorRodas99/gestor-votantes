@@ -8,7 +8,7 @@ const sonIguales = (a: unknown, b: unknown) =>
 /**
  * `POST /votaciones` guarda el registro completo: si el detalle estuvo abierto
  * un rato, mandar lo que se cargó al abrirlo pisaría lo que otro operador
- * guardó mientras tanto (p. ej. el "ya votó"). Por eso se parte del registro
+ * guardó mientras tanto (p. ej. el "ya pasó"). Por eso se parte del registro
  * **recién traído** y se le aplican solo los campos que difieren de los valores
  * con los que se abrió el form.
  *
