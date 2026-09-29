@@ -374,7 +374,7 @@ export function toVotantePayload(data: WizardFormData): VotantePayload {
     inc: data.inc,
     valor_inc: data.inc ? (data.valor_inc ?? 0) : 0,
     // Viajan siempre, también desde el wizard: cuando el server los escriba con
-    // `??0`, un POST que los omita le borraría al votante el "ya votó".
+    // `??0`, un POST que los omita le borraría al votante el "ya pasó".
     yavoto: data.yavoto,
     cobro: data.yavoto ? data.cobro : false,
     obs: data.obs ?? '',
