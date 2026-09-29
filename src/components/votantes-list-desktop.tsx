@@ -1,3 +1,5 @@
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
+import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded'
 import Pagination from '@mui/material/Pagination'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -5,7 +7,10 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import Tooltip from '@mui/material/Tooltip'
+import type { ReactNode } from 'react'
 import { VOTANTES_PER_PAGE } from '../constants/config'
+import { useLocalesPorId } from '../hooks/services/catalogos'
 import { useVotantesPaged } from '../hooks/services/votantes'
 import { formatCedula } from '../lib/format'
 import type { VotantesFilters } from '../services/votantes'
@@ -14,6 +19,54 @@ import EmptyState from './empty-state'
 import ErrorState from './error-state'
 import { VotoEstadoChip, YaVotoChip } from './votante-chips'
 import VotantesLoading from './votantes-loading'
+
+function LineaTruncada({ texto, icono }: { texto: string; icono: ReactNode }) {
+  return (
+    <Tooltip title={texto}>
+      <span className="flex max-w-48 items-center gap-1">
+        {icono}
+        <span className="truncate">{texto}</span>
+      </span>
+    </Tooltip>
+  )
+}
+
+/**
+ * Local y referente comparten columna: con el panel de detalle abierto la
+ * tabla queda en ~570px hasta 1536px de viewport, y dos columnas no entran.
+ */
+function CeldaLocalReferente({
+  local,
+  referente
+}: {
+  local: string | undefined
+  referente: string
+}) {
+  if (!local && !referente) {
+    return <TableCell className="text-text-secondary">—</TableCell>
+  }
+
+  return (
+    <TableCell className="text-label-md font-normal text-text-secondary">
+      <div className="flex flex-col gap-1">
+        {local ? (
+          <LineaTruncada
+            texto={local}
+            icono={<PlaceRoundedIcon fontSize="inherit" className="shrink-0" />}
+          />
+        ) : null}
+        {referente ? (
+          <LineaTruncada
+            texto={referente}
+            icono={
+              <PersonRoundedIcon fontSize="inherit" className="shrink-0" />
+            }
+          />
+        ) : null}
+      </div>
+    </TableCell>
+  )
+}
 
 type VotantesListDesktopProps = {
   filters: VotantesFilters
@@ -34,6 +87,7 @@ function VotantesListDesktop({
 }: VotantesListDesktopProps) {
   const { data, isLoading, isError, error, refetch, isPlaceholderData } =
     useVotantesPaged(filters, page)
+  const locales = useLocalesPorId()
 
   if (isLoading) {
     return <VotantesLoading />
@@ -77,6 +131,9 @@ function VotantesListDesktop({
               <TableCell className="text-label-md font-semibold text-text-secondary uppercase">
                 Estado
               </TableCell>
+              <TableCell className="text-label-md font-semibold text-text-secondary uppercase">
+                Local / Referente
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody
@@ -104,6 +161,10 @@ function VotantesListDesktop({
                     <VotoEstadoChip votante={votante} />
                   </div>
                 </TableCell>
+                <CeldaLocalReferente
+                  local={locales.get(votante.localVotacionId)}
+                  referente={votante.referenteNombre}
+                />
               </TableRow>
             ))}
           </TableBody>
