@@ -32,17 +32,17 @@ export function VotoEstadoChip({ votante }: { votante: Votante }) {
 }
 
 /**
- * Relleno sólido a propósito: "Votó" es un hecho del día de la elección y no
+ * Relleno sólido a propósito: "Pasó" es un hecho del día de la elección y no
  * se tiene que confundir con "Voto seguro" (mismo verde, suave), que es una
  * intención.
  */
 export function YaVotoChip({ votante }: { votante: Votante }) {
   return votante.yaVoto ? (
-    <Pill label="Votó" className="bg-success text-white" />
+    <Pill label="Pasó" className="bg-success text-white" />
   ) : null
 }
 
-/** Todos los chips: votó + voto + afiliado + transporte. */
+/** Todos los chips: pasó + voto + afiliado + transporte. */
 function VotanteChips({ votante }: { votante: Votante }) {
   return (
     <div className="mt-1.5 flex flex-wrap gap-2">
