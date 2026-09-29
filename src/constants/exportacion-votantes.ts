@@ -23,6 +23,7 @@ export const COLUMNAS_VOTANTE: ColumnaExcel<Votante, ContextoExport>[] = [
     width: 30,
     valor: (v, ctx) => ctx.locales.get(v.localVotacionId) ?? null
   },
+  { header: 'Referente', width: 26, valor: (v) => v.referenteNombre || null },
   // `0` en mesa/orden es "no cargado en el padrón", no un dato.
   { header: 'Mesa', width: 8, valor: (v) => v.mesa || null },
   { header: 'Orden', width: 8, valor: (v) => v.orden || null },
@@ -38,9 +39,6 @@ export const COLUMNAS_VOTANTE: ColumnaExcel<Votante, ContextoExport>[] = [
   // { header: 'Dirección', width: 32, valor: (v) => v.direccion || null },
   // { header: 'Fecha de visita', width: 14, valor: (v) => v.fechaVisita },
   // { header: 'Volver a visitar', width: 14, valor: (v) => siNo(v.volverVisitar) },
-  // La de Referente además pide sumar `referentes: Map<number, string>` a
-  // ContextoExport y traer el catálogo en el hook:
-  // { header: 'Referente', width: 26, valor: (v, ctx) => ctx.referentes.get(v.referenteId) ?? null }
 ]
 
 export const NOMBRE_HOJA = 'Votantes'
