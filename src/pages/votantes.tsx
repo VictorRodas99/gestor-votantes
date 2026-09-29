@@ -34,8 +34,8 @@ function VotantesPage() {
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebounce(search, 400)
   const [filters, setFilters] = useState<VotantesFilterValue>({
-    contactado: true,
-    visitado: true
+    contactado: false,
+    visitado: false
   })
   const [searchParams, setSearchParams] = useSearchParams()
 
