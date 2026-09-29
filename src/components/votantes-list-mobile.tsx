@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useLocalesPorId } from '../hooks/services/catalogos'
 import { useVotantesInfinite } from '../hooks/services/votantes'
 import type { VotantesFilters } from '../services/votantes'
 import type { Votante } from '../types/votante'
@@ -24,6 +25,7 @@ function VotantesListMobile({ filters, onSelect }: VotantesListMobileProps) {
     hasNextPage,
     isFetchingNextPage
   } = useVotantesInfinite(filters)
+  const locales = useLocalesPorId()
 
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
@@ -69,7 +71,12 @@ function VotantesListMobile({ filters, onSelect }: VotantesListMobileProps) {
   return (
     <div className="flex flex-col gap-4">
       {votantes.map((votante) => (
-        <VotanteCard key={votante.id} votante={votante} onSelect={onSelect} />
+        <VotanteCard
+          key={votante.id}
+          votante={votante}
+          onSelect={onSelect}
+          localNombre={locales.get(votante.localVotacionId)}
+        />
       ))}
 
       {hasNextPage ? (
