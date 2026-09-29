@@ -1,4 +1,6 @@
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
 import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
+import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardActionArea from '@mui/material/CardActionArea'
@@ -13,9 +15,11 @@ type VotanteCardProps = {
   votante: Votante
   /** Se dispara al tocar la tarjeta (abrir detalle — hoy pendiente). */
   onSelect: (votante: Votante) => void
+  /** Resuelto en la lista */
+  localNombre?: string
 }
 
-function VotanteCard({ votante, onSelect }: VotanteCardProps) {
+function VotanteCard({ votante, onSelect, localNombre }: VotanteCardProps) {
   const hasCelular = votante.celular.length > 0
 
   return (
@@ -40,6 +44,18 @@ function VotanteCard({ votante, onSelect }: VotanteCardProps) {
             <p className="text-body-md text-text-secondary">
               CI: {formatCedula(votante.cedula)}
             </p>
+            {localNombre ? (
+              <p className="flex items-center gap-1 text-label-md font-normal text-text-secondary">
+                <PlaceRoundedIcon fontSize="inherit" className="shrink-0" />
+                <span className="truncate">{localNombre}</span>
+              </p>
+            ) : null}
+            {votante.referenteNombre ? (
+              <p className="flex items-center gap-1 text-label-md font-normal text-text-secondary">
+                <PersonRoundedIcon fontSize="inherit" className="shrink-0" />
+                <span className="truncate">{votante.referenteNombre}</span>
+              </p>
+            ) : null}
             <VotanteChips votante={votante} />
           </div>
         </div>
