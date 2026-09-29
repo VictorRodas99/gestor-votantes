@@ -87,6 +87,7 @@ function mapVotante(raw: VotanteRaw): Votante {
     inc: toBoolean(raw.inc),
     valorInc: Number(raw.valor_inc) || 0,
     referenteId: Number(raw.referente_id) || 0,
+    referenteNombre: raw.referente?.trim() ?? '',
     yaVoto: toBoolean(raw.yavoto),
     cobro: toBoolean(raw.cobro),
     obs: raw.obs?.trim() ?? ''
