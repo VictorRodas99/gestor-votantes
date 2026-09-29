@@ -45,6 +45,11 @@ export type VotanteRaw = {
   tipo_visita: string | null
   /** Vínculo votante↔referente (FK 1:N). `"0"` = sin asignar. */
   referente_id: string
+  /**
+   * `nombre_apellido` del referente, resuelto por subconsulta en el server.
+   * `null` sin referente; ausente con un server previo a pendientes §24.
+   */
+  referente?: string | null
   yavoto: string
   cobro: string
   /** Observación de la jornada; no confundir con `observacion` (la de la visita). */
@@ -115,6 +120,8 @@ export type Votante = {
   valorInc: number
   /** `0` = sin referente asignado. */
   referenteId: number
+  /** `''` = sin referente. */
+  referenteNombre: string
   yaVoto: boolean
   /** Solo puede ser `true` si `yaVoto` lo es. */
   cobro: boolean
