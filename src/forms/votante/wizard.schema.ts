@@ -65,7 +65,7 @@ function reglasJornada(
   if (data.cobro && !data.yavoto) {
     ctx.addIssue({
       code: 'custom',
-      message: 'No puede cobrar sin haber votado',
+      message: 'No puede votar sin haber pasado',
       path: ['cobro']
     })
   }
