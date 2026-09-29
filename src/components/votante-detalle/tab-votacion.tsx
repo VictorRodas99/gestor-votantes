@@ -16,7 +16,7 @@ export default function TabVotacion() {
 
       <hr className="border-divider" />
 
-      {/* De solo lectura (derivado de la cédula) y solo una vez que votó. */}
+      {/* De solo lectura (derivado de la cédula) y solo una vez que pasó. */}
       {yavoto && <CodigoField />}
 
       <LocalVotacionSelect disabled />
