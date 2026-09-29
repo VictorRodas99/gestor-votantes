@@ -12,7 +12,7 @@ import { descargarExcel } from '../lib/exportar-excel'
 import { formatNumero } from '../lib/format'
 import { getVotantesTodos, type VotantesFilters } from '../services/votantes'
 import type { Votante } from '../types/votante'
-import { useLocalesVotacion } from './services/catalogos'
+import { useLocalesPorId } from './services/catalogos'
 
 /** `visibles` = lo que está renderizado; `todos` = todo lo que matchea los filtros. */
 export type AlcanceExport = 'visibles' | 'todos'
@@ -38,7 +38,7 @@ export function useExportarVotantes({
   filters,
   visibles
 }: UseExportarVotantesProps) {
-  const { data: locales } = useLocalesVotacion()
+  const locales = useLocalesPorId()
   const controllerRef = useRef<AbortController | null>(null)
 
   const cancelar = () => controllerRef.current?.abort()
@@ -49,11 +49,7 @@ export function useExportarVotantes({
       controllerRef.current = controller
       const { signal } = controller
 
-      const ctx: ContextoExport = {
-        locales: new Map(
-          (locales ?? []).map((local) => [local.id, local.denominacion])
-        )
-      }
+      const ctx: ContextoExport = { locales }
 
       const avisar = (mensaje: string) =>
         toast.loading(mensaje, {
