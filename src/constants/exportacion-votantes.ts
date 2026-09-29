@@ -31,8 +31,8 @@ export const COLUMNAS_VOTANTE: ColumnaExcel<Votante, ContextoExport>[] = [
   { header: 'Afiliado', width: 10, valor: (v) => siNo(v.afiliado) },
   { header: 'Transporte', width: 12, valor: (v) => siNo(v.requiereTransporte) },
   { header: 'Visitado', width: 10, valor: (v) => siNo(v.visitado) },
-  { header: 'Ya votó', width: 10, valor: (v) => siNo(v.yaVoto) },
-  { header: 'Cobró', width: 10, valor: (v) => siNo(v.cobro) },
+  { header: 'Ya pasó', width: 10, valor: (v) => siNo(v.yaVoto) },
+  { header: 'Votó', width: 10, valor: (v) => siNo(v.cobro) },
   { header: 'Obs de Jornada', width: 40, valor: (v) => v.obs || null },
   { header: 'Observación', width: 40, valor: (v) => v.observacion || null }
 
