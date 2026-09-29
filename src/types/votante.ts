@@ -50,7 +50,9 @@ export type VotanteRaw = {
    * `null` sin referente; ausente con un server previo a pendientes §24.
    */
   referente?: string | null
+  /** "¿Ya pasó?" en la UI. */
   yavoto: string
+  /** "¿Votó?" en la UI. */
   cobro: string
   /** Observación de la jornada; no confundir con `observacion` (la de la visita). */
   obs: string
@@ -122,8 +124,9 @@ export type Votante = {
   referenteId: number
   /** `''` = sin referente. */
   referenteNombre: string
+  /** "¿Ya pasó?" en la UI. */
   yaVoto: boolean
-  /** Solo puede ser `true` si `yaVoto` lo es. */
+  /** "¿Votó?" en la UI; solo puede ser `true` si `yaVoto` lo es. */
   cobro: boolean
   obs: string
 }
