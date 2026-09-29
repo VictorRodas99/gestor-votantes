@@ -1,6 +1,6 @@
 import type { SvgIconComponent } from '@mui/icons-material'
+import DirectionsWalkRoundedIcon from '@mui/icons-material/DirectionsWalkRounded'
 import HowToVoteRoundedIcon from '@mui/icons-material/HowToVoteRounded'
-import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded'
 import Alert from '@mui/material/Alert'
 import Switch from '@mui/material/Switch'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
@@ -54,7 +54,11 @@ function FilaSwitch({
   )
 }
 
-/** ¿Ya votó? · ¿Cobró? · Obs de Jornada — primeros en la tab Votación. */
+/**
+ * ¿Ya pasó? (`yavoto`) · ¿Votó? (`cobro`) · Obs de Jornada — primeros en la
+ * tab Votación. Los labels no coinciden con las columnas: se renombraron en la
+ * UI sin tocar la DB.
+ */
 export default function JornadaFields() {
   const { control, setValue } = useFormContext<WizardFormData>()
   const yavoto = useWatch({ control, name: 'yavoto' })
@@ -79,12 +83,12 @@ export default function JornadaFields() {
           render={({ field }) => (
             <FilaSwitch
               label="¿Ya pasó?"
-              Icon={HowToVoteRoundedIcon}
+              Icon={DirectionsWalkRoundedIcon}
               checked={Boolean(field.value)}
               disabled={bloqueado}
               onChange={(checked) => {
                 field.onChange(checked)
-                // No se puede haber cobrado sin votar.
+                // No se puede haber votado sin haber pasado.
                 if (!checked) {
                   setValue('cobro', false, {
                     shouldDirty: true,
@@ -103,9 +107,9 @@ export default function JornadaFields() {
             render={({ field, fieldState: { error } }) => (
               <FilaSwitch
                 label="¿Votó?"
-                Icon={PaymentsRoundedIcon}
+                Icon={HowToVoteRoundedIcon}
                 checked={Boolean(field.value)}
-                // Si ya viene en `true` sin voto (dato inconsistente) se deja
+                // Si ya viene en `true` sin haber pasado (dato inconsistente) se deja
                 // apagarlo, que es la única forma de corregirlo.
                 disabled={bloqueado || (!yavoto && !field.value)}
                 ayuda={yavoto ? undefined : 'Primero marcá que ya pasó'}
