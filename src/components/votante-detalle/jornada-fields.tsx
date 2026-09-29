@@ -78,7 +78,7 @@ export default function JornadaFields() {
           control={control}
           render={({ field }) => (
             <FilaSwitch
-              label="¿Ya votó?"
+              label="¿Ya pasó?"
               Icon={HowToVoteRoundedIcon}
               checked={Boolean(field.value)}
               disabled={bloqueado}
@@ -102,13 +102,13 @@ export default function JornadaFields() {
             control={control}
             render={({ field, fieldState: { error } }) => (
               <FilaSwitch
-                label="¿Cobró?"
+                label="¿Votó?"
                 Icon={PaymentsRoundedIcon}
                 checked={Boolean(field.value)}
                 // Si ya viene en `true` sin voto (dato inconsistente) se deja
                 // apagarlo, que es la única forma de corregirlo.
                 disabled={bloqueado || (!yavoto && !field.value)}
-                ayuda={yavoto ? undefined : 'Primero marcá que ya votó'}
+                ayuda={yavoto ? undefined : 'Primero marcá que ya pasó'}
                 error={error?.message}
                 onChange={field.onChange}
               />
