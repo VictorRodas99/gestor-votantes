@@ -30,3 +30,9 @@ export const useSectores = () => {
     staleTime: CATALOGO_STALE_TIME
   })
 }
+
+/** para mostrar el local sin otro request */
+export const useLocalesPorId = () => {
+  const { data } = useLocalesVotacion()
+  return new Map((data ?? []).map((local) => [local.id, local.denominacion]))
+}
