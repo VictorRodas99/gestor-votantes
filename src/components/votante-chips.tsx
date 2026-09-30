@@ -11,7 +11,7 @@ export function Pill({
 }) {
   return (
     <span
-      className={`inline-block rounded-full px-3 py-1 text-label-md font-medium ${className}`}
+      className={`inline-block rounded-full px-3 py-1 text-label-md font-medium text-nowrap ${className}`}
     >
       {label}
     </span>
