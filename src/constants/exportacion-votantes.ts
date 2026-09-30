@@ -24,6 +24,12 @@ export const COLUMNAS_VOTANTE: ColumnaExcel<Votante, ContextoExport>[] = [
     valor: (v, ctx) => ctx.locales.get(v.localVotacionId) ?? null
   },
   { header: 'Referente', width: 26, valor: (v) => v.referenteNombre || null },
+  { header: 'Creado por', width: 26, valor: (v) => v.creadoPor || null },
+  {
+    header: 'Modificado por',
+    width: 26,
+    valor: (v) => v.modificadoPor || null
+  },
   // `0` en mesa/orden es "no cargado en el padrón", no un dato.
   { header: 'Mesa', width: 8, valor: (v) => v.mesa || null },
   { header: 'Orden', width: 8, valor: (v) => v.orden || null },
