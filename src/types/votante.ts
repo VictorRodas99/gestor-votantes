@@ -50,6 +50,17 @@ export type VotanteRaw = {
    * `null` sin referente; ausente con un server previo a pendientes §24.
    */
   referente?: string | null
+  /**
+   * `nombre apellido` del **primer** usuario que tocó al votante (quien lo creó;
+   * `MIN(id)` de la auditoría). `null` si nunca se editó desde la app.
+   */
+  creado_por?: string | null
+  /**
+   * `nombre apellido` del **último** usuario del sistema que modificó al votante
+   * (`MAX(id)` de la auditoría). `null` si nunca se editó desde la app; ausente
+   * con un server previo a pendientes §24.
+   */
+  modificado_por?: string | null
   /** "¿Ya pasó?" en la UI. */
   yavoto: string
   /** "¿Votó?" en la UI. */
@@ -124,6 +135,15 @@ export type Votante = {
   referenteId: number
   /** `''` = sin referente. */
   referenteNombre: string
+  /**
+   * Primer usuario que tocó al votante (quien lo creó). `''` = sin auditoría.
+   */
+  creadoPor: string
+  /**
+   * Último usuario que modificó al votante (auditoría). `''` = nunca editado
+   * desde la app. Es lo que el listado muestra como "Referente".
+   */
+  modificadoPor: string
   /** "¿Ya pasó?" en la UI. */
   yaVoto: boolean
   /** "¿Votó?" en la UI; solo puede ser `true` si `yaVoto` lo es. */
