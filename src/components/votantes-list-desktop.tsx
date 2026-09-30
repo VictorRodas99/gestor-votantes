@@ -1,3 +1,5 @@
+import EditRoundedIcon from '@mui/icons-material/EditRounded'
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded'
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded'
 import Pagination from '@mui/material/Pagination'
@@ -20,12 +22,27 @@ import ErrorState from './error-state'
 import { VotoEstadoChip, YaVotoChip } from './votante-chips'
 import VotantesLoading from './votantes-loading'
 
-function LineaTruncada({ texto, icono }: { texto: string; icono: ReactNode }) {
+function LineaTruncada({
+  texto,
+  icono,
+  tooltip,
+  etiqueta
+}: {
+  texto: string
+  icono: ReactNode
+  /** Título del tooltip; por defecto el mismo `texto`. */
+  tooltip?: string
+  /** Sufijo tenue (ej. "creó") que no se trunca; el nombre sí. */
+  etiqueta?: string
+}) {
   return (
-    <Tooltip title={texto}>
+    <Tooltip title={tooltip ?? texto}>
       <span className="flex max-w-48 items-center gap-1">
         {icono}
         <span className="truncate">{texto}</span>
+        {etiqueta ? (
+          <span className="shrink-0 opacity-60">{etiqueta}</span>
+        ) : null}
       </span>
     </Tooltip>
   )
@@ -37,12 +54,19 @@ function LineaTruncada({ texto, icono }: { texto: string; icono: ReactNode }) {
  */
 function CeldaLocalReferente({
   local,
-  referente
+  creadoPor,
+  modificadoPor
 }: {
   local: string | undefined
-  referente: string
+  creadoPor: string
+  modificadoPor: string
 }) {
-  if (!local && !referente) {
+  // Colapsar cuando quien creó y quien editó por última vez es el mismo (o
+  // falta uno): una sola línea, como el ~92% de los votantes con auditoría.
+  const colapsar = !creadoPor || !modificadoPor || creadoPor === modificadoPor
+  const unico = modificadoPor || creadoPor
+
+  if (!local && !unico) {
     return <TableCell className="text-text-secondary">—</TableCell>
   }
 
@@ -55,14 +79,38 @@ function CeldaLocalReferente({
             icono={<PlaceRoundedIcon fontSize="inherit" className="shrink-0" />}
           />
         ) : null}
-        {referente ? (
-          <LineaTruncada
-            texto={referente}
-            icono={
-              <PersonRoundedIcon fontSize="inherit" className="shrink-0" />
-            }
-          />
-        ) : null}
+        {colapsar ? (
+          unico ? (
+            <LineaTruncada
+              texto={unico}
+              icono={
+                <PersonRoundedIcon fontSize="inherit" className="shrink-0" />
+              }
+            />
+          ) : null
+        ) : (
+          <>
+            <LineaTruncada
+              texto={creadoPor}
+              etiqueta="creó"
+              tooltip={`Creó: ${creadoPor}`}
+              icono={
+                <PersonAddAltRoundedIcon
+                  fontSize="inherit"
+                  className="shrink-0"
+                />
+              }
+            />
+            <LineaTruncada
+              texto={modificadoPor}
+              etiqueta="últ."
+              tooltip={`Última edición: ${modificadoPor}`}
+              icono={
+                <EditRoundedIcon fontSize="inherit" className="shrink-0" />
+              }
+            />
+          </>
+        )}
       </div>
     </TableCell>
   )
@@ -163,7 +211,8 @@ function VotantesListDesktop({
                 </TableCell>
                 <CeldaLocalReferente
                   local={locales.get(votante.localVotacionId)}
-                  referente={votante.referenteNombre}
+                  creadoPor={votante.creadoPor}
+                  modificadoPor={votante.modificadoPor}
                 />
               </TableRow>
             ))}
