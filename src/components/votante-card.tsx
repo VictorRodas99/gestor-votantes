@@ -1,3 +1,5 @@
+import EditRoundedIcon from '@mui/icons-material/EditRounded'
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded'
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
 import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded'
@@ -6,6 +8,7 @@ import Card from '@mui/material/Card'
 import CardActionArea from '@mui/material/CardActionArea'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import type { ReactNode } from 'react'
 import { getAvatarColor } from '../lib/avatar-color'
 import { formatCedula, getInitials } from '../lib/format'
 import type { Votante } from '../types/votante'
@@ -19,8 +22,34 @@ type VotanteCardProps = {
   localNombre?: string
 }
 
+function LineaDato({
+  texto,
+  icono,
+  etiqueta
+}: {
+  texto: string
+  icono: ReactNode
+  /** Sufijo tenue (ej. "creó") que no se trunca; el nombre sí. */
+  etiqueta?: string
+}) {
+  return (
+    <p className="flex items-center gap-1 text-label-md font-normal text-text-secondary">
+      {icono}
+      <span className="truncate">{texto}</span>
+      {etiqueta ? <span className="shrink-0 opacity-60">{etiqueta}</span> : null}
+    </p>
+  )
+}
+
 function VotanteCard({ votante, onSelect, localNombre }: VotanteCardProps) {
   const hasCelular = votante.celular.length > 0
+  // Mismo criterio que el listado desktop: colapsar creador y último editor en
+  // una línea cuando coinciden (o falta uno); dos líneas solo si difieren.
+  const colapsarEditor =
+    !votante.creadoPor ||
+    !votante.modificadoPor ||
+    votante.creadoPor === votante.modificadoPor
+  const unicoEditor = votante.modificadoPor || votante.creadoPor
 
   return (
     <Card className="relative">
@@ -45,17 +74,43 @@ function VotanteCard({ votante, onSelect, localNombre }: VotanteCardProps) {
               CI: {formatCedula(votante.cedula)}
             </p>
             {localNombre ? (
-              <p className="flex items-center gap-1 text-label-md font-normal text-text-secondary">
-                <PlaceRoundedIcon fontSize="inherit" className="shrink-0" />
-                <span className="truncate">{localNombre}</span>
-              </p>
+              <LineaDato
+                texto={localNombre}
+                icono={
+                  <PlaceRoundedIcon fontSize="inherit" className="shrink-0" />
+                }
+              />
             ) : null}
-            {votante.referenteNombre ? (
-              <p className="flex items-center gap-1 text-label-md font-normal text-text-secondary">
-                <PersonRoundedIcon fontSize="inherit" className="shrink-0" />
-                <span className="truncate">{votante.referenteNombre}</span>
-              </p>
-            ) : null}
+            {colapsarEditor ? (
+              unicoEditor ? (
+                <LineaDato
+                  texto={unicoEditor}
+                  icono={
+                    <PersonRoundedIcon fontSize="inherit" className="shrink-0" />
+                  }
+                />
+              ) : null
+            ) : (
+              <>
+                <LineaDato
+                  texto={votante.creadoPor}
+                  etiqueta="creó"
+                  icono={
+                    <PersonAddAltRoundedIcon
+                      fontSize="inherit"
+                      className="shrink-0"
+                    />
+                  }
+                />
+                <LineaDato
+                  texto={votante.modificadoPor}
+                  etiqueta="últ."
+                  icono={
+                    <EditRoundedIcon fontSize="inherit" className="shrink-0" />
+                  }
+                />
+              </>
+            )}
             <VotanteChips votante={votante} />
           </div>
         </div>
