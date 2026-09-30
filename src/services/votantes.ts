@@ -88,6 +88,8 @@ function mapVotante(raw: VotanteRaw): Votante {
     valorInc: Number(raw.valor_inc) || 0,
     referenteId: Number(raw.referente_id) || 0,
     referenteNombre: raw.referente?.trim() ?? '',
+    creadoPor: raw.creado_por?.trim() ?? '',
+    modificadoPor: raw.modificado_por?.trim() ?? '',
     yaVoto: toBoolean(raw.yavoto),
     cobro: toBoolean(raw.cobro),
     obs: raw.obs?.trim() ?? ''
