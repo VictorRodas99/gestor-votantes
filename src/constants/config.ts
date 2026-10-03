@@ -10,3 +10,6 @@ export const VOTANTES_PER_PAGE = 20
 export const VIVIENDAS_PER_PAGE = 12
 
 export const JORNADA_ESCRITURA_HABILITADA = true
+
+/** `grupos.id` de los Punteros: no pueden editar `yavoto` ni `cobro`. */
+export const GRUPO_PUNTEROS = 6

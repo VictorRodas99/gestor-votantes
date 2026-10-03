@@ -6,6 +6,7 @@ import Switch from '@mui/material/Switch'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { JORNADA_ESCRITURA_HABILITADA } from '../../constants/config'
 import type { WizardFormData } from '../../forms/votante/wizard.schema'
+import { usePuedeEditarJornada } from '../../hooks/use-puede-editar-jornada'
 import FormField from '../wizard/form-field'
 
 type FilaSwitchProps = {
@@ -63,6 +64,7 @@ export default function JornadaFields() {
   const { control, setValue } = useFormContext<WizardFormData>()
   const yavoto = useWatch({ control, name: 'yavoto' })
   const bloqueado = !JORNADA_ESCRITURA_HABILITADA
+  const sinPermiso = !usePuedeEditarJornada()
 
   return (
     <section className="flex flex-col gap-3">
@@ -85,7 +87,7 @@ export default function JornadaFields() {
               label="¿Ya pasó?"
               Icon={DirectionsWalkRoundedIcon}
               checked={Boolean(field.value)}
-              disabled={bloqueado}
+              disabled={bloqueado || sinPermiso}
               onChange={(checked) => {
                 field.onChange(checked)
                 // No se puede haber votado sin haber pasado.
@@ -111,8 +113,10 @@ export default function JornadaFields() {
                 checked={Boolean(field.value)}
                 // Si ya viene en `true` sin haber pasado (dato inconsistente) se deja
                 // apagarlo, que es la única forma de corregirlo.
-                disabled={bloqueado || (!yavoto && !field.value)}
-                ayuda={yavoto ? undefined : 'Primero marcá que ya pasó'}
+                disabled={bloqueado || sinPermiso || (!yavoto && !field.value)}
+                ayuda={
+                  sinPermiso || yavoto ? undefined : 'Primero marcá que ya pasó'
+                }
                 error={error?.message}
                 onChange={field.onChange}
               />

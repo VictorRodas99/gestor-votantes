@@ -9,7 +9,9 @@ export const getUsuarioActual = async (): Promise<UsuarioSesion | null> => {
     if (raw?.log !== true) return null
 
     const id = Number(raw.id)
-    return Number.isFinite(id) && id > 0 ? { id } : null
+    if (!Number.isFinite(id) || id <= 0) return null
+
+    return { id, grupos: Object.keys(raw.grupos ?? {}).map(Number) }
   } catch {
     return null
   }
